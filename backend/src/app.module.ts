@@ -13,6 +13,7 @@ import { Auction } from './auction/auction.entity';
 import { Item } from './item/item.entity';
 import { Bid } from './bid/bid.entity';
 import { Review } from './review/review.entity';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -51,6 +52,7 @@ import { Review } from './review/review.entity';
     ItemModule,
     BidModule,
     ReviewModule,
+    AuthModule,
   ],
   providers: [AuthService],
 })

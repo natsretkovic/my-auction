@@ -1,0 +1,94 @@
+<div class="min-h-screen flex items-center justify-center bg-gray-100 py-12 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-xl w-full p-8 space-y-6 bg-white shadow-2xl rounded-xl border border-gray-200">
+        
+        <h2 class="text-3xl font-extrabold text-gray-900 text-center">
+            Kreirajte nalog
+        </h2>
+        
+        <form (ngSubmit)="register()" class="mt-8 space-y-4">
+            
+            <div class="space-y-4">
+                
+                <div>
+                    <input 
+                        type="text" 
+                        [(ngModel)]="ime" 
+                        name="ime" 
+                        placeholder="Ime" 
+                        required
+                        class="appearance-none relative block w-full px-4 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-lg focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-lg transition duration-150"
+                    >
+                </div>
+                
+                <div>
+                    <input 
+                        type="text" 
+                        [(ngModel)]="prezime" 
+                        name="prezime" 
+                        placeholder="Prezime" 
+                        required
+                        class="appearance-none relative block w-full px-4 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-lg focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-lg transition duration-150"
+                    >
+                </div>
+                
+                <div>
+                    <input 
+                        type="text" 
+                        [(ngModel)]="brojTelefona" 
+                        name="brojTelefona" 
+                        placeholder="Broj telefona" 
+                        required
+                        class="appearance-none relative block w-full px-4 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-lg focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-lg transition duration-150"
+                    >
+                </div>
+
+                <div>
+                    <input 
+                        type="email" 
+                        [(ngModel)]="email" 
+                        name="email" 
+                        placeholder="Email adresa" 
+                        required
+                        class="appearance-none relative block w-full px-4 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-lg focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-lg transition duration-150"
+                    >
+                </div>
+
+                <div>
+                    <input 
+                        type="text" 
+                        [(ngModel)]="username" 
+                        name="username" 
+                        placeholder="Korisničko ime" 
+                        required
+                        class="appearance-none relative block w-full px-4 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-lg focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-lg transition duration-150"
+                    >
+                </div>
+                
+                <div>
+                    <input 
+                        type="password" 
+                        [(ngModel)]="password" 
+                        name="password" 
+                        placeholder="Lozinka" 
+                        required
+                        class="appearance-none relative block w-full px-4 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-lg focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-lg transition duration-150"
+                    >
+                </div>
+
+            </div>
+
+            <div>
+                <button 
+                    type="submit"
+                    class="group relative w-full flex justify-center py-3 px-4 border border-transparent text-lg font-medium rounded-lg text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition duration-150 ease-in-out"
+                >
+                    Registruj se
+                </button>
+            </div>
+        </form>
+        
+        <p *ngIf="error" class="text-red-600 text-center mt-4">
+            {{ error }}
+        </p>
+    </div>
+</div>
