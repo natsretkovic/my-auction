@@ -17,4 +17,11 @@ export class AuthService {
   register(user: any): Observable<any> {
     return this.http.post(`${this.apiUrl}/register`, user);
   }
+   getProfile(): Observable<any> {
+    return this.http.get(`${this.apiUrl}/profile`);
+  }
+   logout(): void {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+  }
 }

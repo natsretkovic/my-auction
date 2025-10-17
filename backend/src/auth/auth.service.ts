@@ -54,4 +54,11 @@ export class AuthService {
 
     return { user, token };
   }
+  async getProfileById(userId: number): Promise<User> {
+    const user = await this.userService.findUserById(userId);
+    if (!user) {
+      throw new UnauthorizedException('Korisnik ne postoji.');
+    }
+    return user;
+  }
 }
