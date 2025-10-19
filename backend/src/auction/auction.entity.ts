@@ -15,16 +15,16 @@ export class Auction {
   id: number;
 
   @Column()
-  title: string;
-
-  @Column()
-  description: string;
-
-  @Column()
   startingPrice: number;
 
   @Column({ default: false })
   active: boolean;
+
+  @Column({ type: 'timestamptz' })
+  startDate: Date;
+
+  @Column({ type: 'timestamptz' })
+  endDate: Date;
 
   @ManyToOne(() => User, (user) => user.auctions)
   seller: User;

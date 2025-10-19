@@ -3,7 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuctionService } from './auction.service';
 import { AuctionController } from './auction.controller';
 import { Auction } from './auction.entity';
-import { Item } from '../item/item.entity'; // ⬅️ Ako Item nije u istom folderu
+import { Item } from '../item/item.entity';
 import { User } from '../user/user.entity';
 
 @Module({

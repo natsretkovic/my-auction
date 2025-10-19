@@ -70,7 +70,7 @@ export class AuthEffects {
       ofType(AuthActions.loginSuccess),
       tap((action) => {
         if( action.redirect ) {
-          this.router.navigate(['/']);
+          this.router.navigate(['/profile']);
         }
       }),
     ),

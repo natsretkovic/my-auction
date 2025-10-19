@@ -1,6 +1,8 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from 'typeorm';
 import { User } from '../user/user.entity';
 import { Auction } from '../auction/auction.entity';
+import { ItemCategory } from 'src/enums/itemCategory.enum';
+import { ItemStatus } from 'src/enums/itemStatus.enum';
 
 @Entity()
 export class Item {
@@ -13,14 +15,22 @@ export class Item {
   @Column({ type: 'text' })
   opis: string;
 
-  @Column()
-  kategorija: string;
+  @Column({
+    type: 'enum',
+    enum: ItemCategory,
+    default: ItemCategory.OTHER,
+  })
+  kategorija: ItemCategory;
 
   @Column('simple-array', { nullable: true })
   slike: string[];
 
-  @Column()
-  stanje: string;
+  @Column({
+    type: 'enum',
+    enum: ItemStatus,
+    default: ItemStatus.OTHER,
+  })
+  stanje: ItemStatus;
 
   @ManyToOne(() => User, (user) => user.auctions)
   vlasnik!: User;

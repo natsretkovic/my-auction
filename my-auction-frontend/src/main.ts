@@ -7,23 +7,27 @@ import { AuthInterceptor } from './app/interceptors/auth.interceptor';
 import { provideState, provideStore } from '@ngrx/store';
 import { provideEffects } from '@ngrx/effects';
 import { AuthEffects } from './app/store/auth/auth.effects';
+import { AuctionEffects } from './app/store/auction/auction.effects';
+import { auctionReducer, auctionFeatureKey } from './app/store/auction/auction.reducer';
 import { authFeatureKey, authReducer } from './app/store/auth/auth.reducer';
 
 bootstrapApplication(App, {
-  providers: [
-    // 1. NgRx Store i Auth State
-    provideStore(), // Inicijalizacija glavnog Store-a
-    provideState({
-      name: authFeatureKey,
-      reducer: authReducer,
+  providers: [
+   provideStore(),
+   provideState({
+    name: authFeatureKey,
+      reducer: authReducer,
+
     }),
-    
-    // 2. NgRx Effects za Auth
+    provideState({
+        name: auctionFeatureKey,
+        reducer: auctionReducer,
+        }),
     provideEffects([
       AuthEffects,
+      AuctionEffects,
     ]),
     
-    // 3. HTTP Klijent i Interceptori (Potrebno za AuthService/AuthInterceptor)
     provideHttpClient(
       withInterceptorsFromDi()
     ),
@@ -33,7 +37,6 @@ bootstrapApplication(App, {
       multi: true
     },
     
-    // 4. Rutiranje
     provideRouter(routes),
   ]
 }).catch(err => console.error(err));
