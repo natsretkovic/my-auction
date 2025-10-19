@@ -15,14 +15,6 @@ export const loginFailure = createAction(
   props<{ error: any }>()
 );
 
-export const logoutRequested = createAction(
-  '[Auth] Logout Requested',
-);
-
-export const logoutConfirmed = createAction(
-  '[Auth] Logout Confirmed',
-);
-
 export const checkAuthStatus = createAction(
   '[Auth] Check Auth Status',
 );
@@ -39,15 +31,15 @@ export const loadUserProfileSuccess = createAction(
 export const loadUserProfileFailure = createAction(
   '[Auth] Load User Profile Failure',
 );
+export const logout = createAction('[Auth] Logout');
 
 export const AuthActions = {
   loginRequested,
   loginSuccess,
   loginFailure,
-  logoutRequested,
-  logoutConfirmed,
   checkAuthStatus,
   loadUserProfile,
   loadUserProfileSuccess,
   loadUserProfileFailure,
+  logout,
 };
