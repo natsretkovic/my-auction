@@ -1,13 +1,18 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { DataSource } from 'typeorm';
+import { DataSource, Repository } from 'typeorm';
 import { Auction } from './auction.entity';
 import { Item } from '../item/item.entity';
 import { User } from '../user/user.entity';
 import { CreateAuctionItemDto } from '../dto/createAuctionItem.dto';
+import { InjectRepository } from '@nestjs/typeorm';
 
 @Injectable()
 export class AuctionService {
-  constructor(private readonly dataSource: DataSource) {}
+  constructor(
+    private readonly dataSource: DataSource,
+    @InjectRepository(Auction)
+    private readonly auctionRepository: Repository<Auction>,
+  ) {}
 
   async addAuction(
     dto: CreateAuctionItemDto,
@@ -41,6 +46,12 @@ export class AuctionService {
       await manager.save(Item, newItem);
 
       return savedAuction;
+    });
+  }
+  async getAuctionsByUser(userId: number): Promise<Auction[]> {
+    return this.auctionRepository.find({
+      where: { seller: { id: userId } },
+      relations: ['items', 'bidsList', 'seller'],
     });
   }
 }

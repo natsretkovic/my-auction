@@ -1,8 +1,9 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
-import { Controller, Post, Body, UseGuards, Req } from '@nestjs/common';
+import { Controller, Post, Body, UseGuards, Req, Get } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { AuctionService } from './auction.service';
 import { CreateAuctionItemDto } from '../dto/createAuctionItem.dto';
+import { Auction } from './auction.entity';
 
 @Controller('auctions')
 export class AuctionController {
@@ -17,5 +18,11 @@ export class AuctionController {
       message: 'Aukcija kreirana',
       auction: savedAuction,
     };
+  }
+  @UseGuards(AuthGuard('jwt'))
+  @Get('myAuctions')
+  async getMyAuctions(@Req() req): Promise<Auction[]> {
+    const userId = parseInt(req.user.userId, 10);
+    return this.auctionService.getAuctionsByUser(userId);
   }
 }
