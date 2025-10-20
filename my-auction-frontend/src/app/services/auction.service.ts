@@ -17,7 +17,7 @@ export class AuctionService {
     return this.http.post(`${this.baseUrl}/addAuction`, dto);
   }
 
- /* getUserAuctions(userId: number): Observable<any> {
-    return this.http.get(`${this.baseUrl}/user/${userId}`);
-  }*/
+ getMyAuctions(): Observable<Auction[]> {
+    return this.http.get<Auction[]>(`${this.baseUrl}/myAuctions`);
+  }
 }

@@ -45,6 +45,22 @@
     <div *ngIf="!(user$ | async)" class="text-center p-6 bg-red-50 rounded-lg text-red-600 font-medium max-w-xl">
         <p>Nema dostupnih korisničkih podataka.</p>
     </div>
+
+    <section class="mt-6">
+  <h2 class="text-xl font-bold mb-4">Moje aukcije</h2>
+
+  <div *ngIf="loadingAuctions" class="text-center py-10">
+    Učitavanje aukcija...
+  </div>
+
+  <div *ngIf="!loadingAuctions && auctions.length === 0" class="text-center py-10 text-gray-500">
+    Nemate trenutno aktivnih aukcija.
+  </div>
+
+  <div *ngIf="!loadingAuctions && auctions.length > 0" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+    <app-auction-card *ngFor="let auction of auctions" [auction]="auction"></app-auction-card>
+  </div>
+    </section>
     
     </main>
 </div>

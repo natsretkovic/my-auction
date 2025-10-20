@@ -1,0 +1,32 @@
+<div 
+  class="bg-white rounded-xl shadow hover:shadow-lg transition p-4 cursor-pointer"
+  (click)="openAuction()"
+>
+     <!-- Slika ili placeholder -->
+  <div class="w-full h-48 mb-3 rounded-lg bg-gray-200 flex items-center justify-center overflow-hidden">
+    <img 
+      *ngIf="mainImage"
+      [src]="mainImage"
+      alt="Auction image"
+      class="w-full h-full object-cover"
+    />
+    <span *ngIf="!mainImage" class="text-gray-500 text-sm font-medium">
+      Auction Image
+    </span>
+  </div>
+
+  <h3 class="text-lg font-semibold text-gray-800 truncate">
+    {{ auction.naziv }}
+  </h3>
+
+  <p class="text-gray-600 text-sm">
+    Cena: 
+    <span class="font-medium text-gray-900">
+      {{ getCurrentPrice() | currency:'EUR':'symbol':'1.0-0' }}
+    </span>
+  </p>
+
+  <p class="text-sm text-gray-500">
+    Ističe: {{ auction.endDate | date:'dd.MM.yyyy. HH:mm' }}
+  </p>
+</div>
