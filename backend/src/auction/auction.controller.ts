@@ -1,5 +1,6 @@
+/* eslint-disable prettier/prettier */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
-import { Controller, Post, Body, UseGuards, Req, Get } from '@nestjs/common';
+import { Controller, Post, Body, UseGuards, Req, Get, Param, ParseIntPipe } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { AuctionService } from './auction.service';
 import { CreateAuctionItemDto } from '../dto/createAuctionItem.dto';
@@ -24,5 +25,22 @@ export class AuctionController {
   async getMyAuctions(@Req() req): Promise<Auction[]> {
     const userId = parseInt(req.user.userId, 10);
     return this.auctionService.getAuctionsByUser(userId);
+  }
+  @UseGuards(AuthGuard('jwt'))
+  @Post('bid')
+  async placeBid(
+    @Req() req,
+    @Body() body: { auctionId: number; amount: number },
+  ) {
+    return this.auctionService.placeBid(
+      body.auctionId,
+      req.user.userId,
+      body.amount,
+    );
+  }
+  @UseGuards(AuthGuard('jwt'))
+  @Get(':id')
+  async getAuctionById(@Param('id', ParseIntPipe) id: number) {
+    return this.auctionService.getAuctionById(id);
   }
 }

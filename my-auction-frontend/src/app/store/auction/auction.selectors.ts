@@ -21,5 +21,14 @@ export const selectAuctionError = createSelector(
 
 export const selectSelectedAuction = createSelector(
   selectAuctionState,
-  (state) => state.selectedAuction
+  state => state.selectedAuction ?? null
+);
+export const selectBidsForSelectedAuction = createSelector(
+  selectSelectedAuction,
+  (auction) => auction ? auction.bidsList : []
+);
+
+export const selectHighestBid = createSelector(
+  selectBidsForSelectedAuction,
+  (bids) => bids.length ? Math.max(...bids.map(b => b.ponuda)) : 0
 );

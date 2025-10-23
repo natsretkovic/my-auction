@@ -5,9 +5,10 @@ import { AuctionController } from './auction.controller';
 import { Auction } from './auction.entity';
 import { Item } from '../item/item.entity';
 import { User } from '../user/user.entity';
+import { Bid } from 'src/bid/bid.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Auction, Item, User])],
+  imports: [TypeOrmModule.forFeature([Auction, Item, User, Bid])],
   controllers: [AuctionController],
   providers: [AuctionService],
 })

@@ -20,4 +20,14 @@ export class AuctionService {
  getMyAuctions(): Observable<Auction[]> {
     return this.http.get<Auction[]>(`${this.baseUrl}/myAuctions`);
   }
+   getAuctionById(auctionId: number): Observable<Auction> {
+    return this.http.get<Auction>(`${this.baseUrl}/${auctionId}`);
+  }
+
+  placeBid(auctionId: number, amount: number): Observable<any> {
+    return this.http.post(`${this.baseUrl}/bid`, {
+      auctionId,
+      amount
+    });
+  }
 }

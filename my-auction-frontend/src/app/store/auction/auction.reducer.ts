@@ -37,5 +37,59 @@ export const auctionReducer = createReducer(
   on(AuctionActions.selectAuction, (state, { auctionId }) => ({
     ...state,
     selectedAuction: state.auctions.find(a => a.id === auctionId),
+  })),
+  on(AuctionActions.loadAuctions, state => ({
+    ...state,
+    loading: true,
+    error: null
+  })),
+  on(AuctionActions.loadAuctionsSuccess, (state, { auctions }) => ({
+    ...state,
+    auctions,
+    loading: false
+  })),
+  on(AuctionActions.loadAuctionsFailure, (state, { error }) => ({
+    ...state,
+    loading: false,
+    error
+  })),
+
+  on(AuctionActions.addAuctionSuccess, (state, { auction }) => ({
+    ...state,
+    auctions: [...state.auctions, auction]
+  })),
+  on(AuctionActions.addAuctionFailure, (state, { error }) => ({
+    ...state,
+    error
+  })),
+
+  on(AuctionActions.loadAuctionById, state => ({
+    ...state,
+    loading: true,
+    selectedAuction: null
+  })),
+  on(AuctionActions.loadAuctionByIdSuccess, (state, { auction }) => ({
+    ...state,
+    loading: false,
+    selectedAuction: auction
+  })),
+  on(AuctionActions.loadAuctionByIdFailure, (state, { error }) => ({
+    ...state,
+    loading: false,
+    error
+  })),
+
+  on(AuctionActions.placeBidSuccess, (state, { bid }) => ({
+    ...state,
+    selectedAuction: state.selectedAuction
+      ? {
+          ...state.selectedAuction,
+          bidsList: [...state.selectedAuction.bidsList, bid]
+        }
+      : null
+  })),
+  on(AuctionActions.placeBidFailure, (state, { error }) => ({
+    ...state,
+    error
   }))
 );

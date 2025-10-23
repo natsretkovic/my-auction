@@ -1,18 +1,17 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { Auction } from '../../models/auction.model';
-import { CommonModule, CurrencyPipe, DatePipe } from '@angular/common';
-import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
+import { CommonModule, DatePipe } from '@angular/common';
 
 @Component({
   selector: 'app-auction-card',
   templateUrl: './auction-card.html',
-  imports:[CurrencyPipe, DatePipe, CommonModule]
+  imports:[DatePipe, CommonModule]
 })
 export class AuctionCardComponent {
   @Input() auction!: Auction;
 
-  constructor(private router: Router, private sanitizer: DomSanitizer) {}
+  constructor(private router: Router) {}
 
     get mainImage(): string {
     const firstItem = this.auction?.items?.[0];
