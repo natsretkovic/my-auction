@@ -58,3 +58,11 @@ export const placeBidFailure = createAction(
   '[Auction API] Place Bid Failure',
   props<{ error: string }>()
 );
+export const bidReceivedFromSocket = createAction(
+  '[Auction] Bid Received From Socket',
+  props<{ auction: Auction }>()
+);
+export const joinAuctionRoom = createAction(
+  '[Auction Details] Join Auction Socket Room',
+  props<{ auctionId: number }>()
+);

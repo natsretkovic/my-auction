@@ -8,7 +8,7 @@ import { map, switchMap, startWith } from 'rxjs/operators';
 import { Auction } from '../../models/auction.model';
 import { User } from '../../models/user.model';
 import { AuthService } from '../../services/auth.service';
-import { loadAuctionById, selectAuction, placeBid } from '../../store/auction/auction.actions';
+import { loadAuctionById, selectAuction, placeBid, joinAuctionRoom } from '../../store/auction/auction.actions';
 import { selectSelectedAuction, selectAuctionLoading } from '../../store/auction/auction.selectors';
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc'; 
@@ -56,12 +56,11 @@ export class AuctionDetailsComponent implements OnInit {
 
     this.store.dispatch(loadAuctionById({ id: auctionId }));
     this.store.dispatch(selectAuction({ auctionId }));
-     const serverAuction$ = timer(0, 3000).pipe(
-      switchMap(() => this.store.select(selectSelectedAuction)),
-      
-    );
+    this.store.dispatch(joinAuctionRoom({ auctionId }));
 
-    this.remainingTime$ = serverAuction$.pipe(
+    const storeAuction$ = this.store.select(selectSelectedAuction);
+
+    this.remainingTime$ = storeAuction$.pipe(
       map(auction => auction?.endDate),
       switchMap(endDateString => {
         if (!endDateString) {
@@ -96,7 +95,7 @@ export class AuctionDetailsComponent implements OnInit {
 
 
     this.auction$ = combineLatest([
-      serverAuction$,
+      storeAuction$,
       this.localBid$.pipe(startWith(0)),
       this.remainingTime$
     ]).pipe(

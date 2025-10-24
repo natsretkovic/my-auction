@@ -12,6 +12,7 @@ import { User } from '../user/user.entity';
 import { CreateAuctionItemDto } from '../dto/createAuctionItem.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Bid } from 'src/bid/bid.entity';
+import { AuctionGateway } from './auction.gateway';
 
 @Injectable()
 export class AuctionService {
@@ -21,6 +22,7 @@ export class AuctionService {
     private readonly auctionRepository: Repository<Auction>,
     @InjectRepository(Bid)
     private readonly bidRepository: Repository<Bid>,
+    private readonly auctionGateway: AuctionGateway,
   ) {}
 
   async addAuction(
@@ -89,8 +91,15 @@ export class AuctionService {
       auction: { id: auctionId } as Auction,
       user: { id: userId } as User,
     });
+    const savedBid = await this.bidRepository.save(bid);
+    const updatedAuction = await this.getAuctionById(auctionId);
 
-    return this.bidRepository.save(bid);
+    const roomName = `auction:${auctionId}`;
+    this.auctionGateway.server
+      .to(roomName)
+      .emit('newBid', { newAuction: updatedAuction });
+
+    return savedBid;
   }
   async getAuctionById(id: number): Promise<Auction> {
     const auction = await this.auctionRepository.findOne({

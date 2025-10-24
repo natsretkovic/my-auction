@@ -91,5 +91,16 @@ export const auctionReducer = createReducer(
   on(AuctionActions.placeBidFailure, (state, { error }) => ({
     ...state,
     error
-  }))
+  })),
+  on(AuctionActions.bidReceivedFromSocket, (state, { auction }) => {
+    const updatedAuctions = state.auctions.map(a => 
+        a.id === auction.id ? auction : a
+    );
+
+    return {
+        ...state,
+        auctions: updatedAuctions,
+        selectedAuction: state.selectedAuction?.id === auction.id ? auction : state.selectedAuction,
+    };
+  })
 );
