@@ -1,0 +1,33 @@
+<div *ngIf="loading" class="text-center py-8">Učitavanje aukcija...</div>
+<div *ngIf="error" class="text-center text-red-500 py-8">{{ error }}</div>
+
+<div *ngIf="!loading && !error">
+
+  <h2 class="text-xl font-bold mb-4">Popularne aukcije</h2>
+  <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 mb-8">
+    <app-auction-card 
+      *ngFor="let auction of popularAuctions"
+      [auction]="auction"
+      (clicked)="openAuction(auction.id)">
+    </app-auction-card>
+  </div>
+
+  <h2 class="text-xl font-bold mb-4">Najnovije aukcije</h2>
+  <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 mb-8">
+    <app-auction-card 
+      *ngFor="let auction of recentAuctions"
+      [auction]="auction"
+      (clicked)="openAuction(auction.id)">
+    </app-auction-card>
+  </div>
+
+  <h2 class="text-xl font-bold mb-4">Aukcije koje uskoro ističu</h2>
+  <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 mb-8">
+    <app-auction-card 
+      *ngFor="let auction of endingSoonAuctions"
+      [auction]="auction"
+      (clicked)="openAuction(auction.id)">
+    </app-auction-card>
+  </div>
+
+</div>

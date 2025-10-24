@@ -1,9 +1,11 @@
+/* eslint-disable @typescript-eslint/require-await */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import {
   ForbiddenException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { DataSource, Repository } from 'typeorm';
+import { DataSource, Repository, Between } from 'typeorm';
 import { Auction } from './auction.entity';
 import { Item } from '../item/item.entity';
 import { User } from '../user/user.entity';
@@ -101,5 +103,68 @@ export class AuctionService {
     }
 
     return auction;
+  }
+  async getPopularAuctions(): Promise<Auction[]> {
+    return [
+      {
+        id: 1,
+        startingPrice: 1000,
+        active: true,
+        startDate: new Date(),
+        endDate: new Date(Date.now() + 3600 * 1000),
+        seller: { id: 1, username: 'Prodavac1' } as any,
+        items: [
+          {
+            id: 1,
+            naziv: 'Predmet 1',
+            slike: ['https://placehold.co/200x200'],
+          } as any,
+        ],
+        bidsList: [],
+      } as Auction,
+      {
+        id: 2,
+        startingPrice: 2000,
+        active: true,
+        startDate: new Date(),
+        endDate: new Date(Date.now() + 7200 * 1000),
+        seller: { id: 2, username: 'Prodavac2' } as any,
+        items: [
+          {
+            id: 2,
+            naziv: 'Predmet 2',
+            slike: ['https://placehold.co/200x200'],
+          } as any,
+        ],
+        bidsList: [],
+      } as Auction,
+    ];
+    /*return this.auctionRepository
+      .createQueryBuilder('auction')
+      .leftJoinAndSelect('auction.bidsList', 'bid')
+      .leftJoinAndSelect('auction.items', 'item')
+      .leftJoinAndSelect('auction.seller', 'seller')
+      .loadRelationCountAndMap('auction.bidCount', 'auction.bidsList')
+      .orderBy('auction.bidCount', 'DESC')
+      .take(10)
+      .getMany();*/
+  }
+  async getRecentAuctions(): Promise<Auction[]> {
+    return this.auctionRepository.find({
+      relations: ['items', 'items.vlasnik', 'bidsList', 'seller'],
+      order: { startDate: 'DESC' },
+      take: 10,
+    });
+  }
+  async getEndingSoonAuctions(): Promise<Auction[]> {
+    const now = new Date();
+    const next24h = new Date();
+    next24h.setHours(now.getHours() + 24);
+
+    return this.auctionRepository.find({
+      where: { endDate: Between(now, next24h), active: true },
+      relations: ['items', 'items.vlasnik', 'bidsList', 'seller'],
+      order: { endDate: 'ASC' },
+    });
   }
 }

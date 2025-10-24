@@ -30,4 +30,15 @@ export class AuctionService {
       amount
     });
   }
+  getPopularAuctions(): Observable<Auction[]> {
+  return this.http.get<Auction[]>(`${this.baseUrl}/popular`);
+ }
+
+  getRecentAuctions(): Observable<Auction[]> {
+    return this.http.get<Auction[]>(`${this.baseUrl}/recent`);
+  }
+
+  getEndingSoonAuctions(): Observable<Auction[]> {
+    return this.http.get<Auction[]>(`${this.baseUrl}/endingSoon`);
+  }
 }

@@ -38,6 +38,20 @@ export class AuctionController {
       body.amount,
     );
   }
+   @Get('popular')
+  async getPopular(): Promise<Auction[]> {
+    return this.auctionService.getPopularAuctions();
+  }
+
+  @Get('recent')
+  async getRecent(): Promise<Auction[]> {
+    return this.auctionService.getRecentAuctions();
+  }
+
+  @Get('endingSoon')
+  async getEndingSoon(): Promise<Auction[]> {
+    return this.auctionService.getEndingSoonAuctions();
+  }
   @UseGuards(AuthGuard('jwt'))
   @Get(':id')
   async getAuctionById(@Param('id', ParseIntPipe) id: number) {

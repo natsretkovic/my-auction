@@ -6,13 +6,21 @@
       <h1 class="text-xl md:text-2xl font-bold text-indigo-600 mb-8 md:hidden block">MP</h1>
 
       <nav class="space-y-2">
-        <a href="/profil" class="flex items-center p-3 text-lg font-medium text-white bg-indigo-600 rounded-lg transition duration-150" aria-current="page">
-          <span class="md:inline hidden">Moj profil</span>
-          <span class="md:hidden block">P</span> </a>
-        <a href="/aukcije" class="flex items-center p-3 text-lg font-medium text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 rounded-lg transition duration-150">
-          <span class="md:inline hidden">Aukcije</span>
-          <span class="md:hidden block">A</span> </a>
-      </nav>
+  <a [routerLink]="['/profile']" class="flex items-center p-3 text-lg font-medium text-white bg-indigo-600 rounded-lg transition duration-150" aria-current="page">
+    <span class="md:inline hidden">Moj profil</span>
+    <span class="md:hidden block">P</span>
+  </a>
+
+  <a [routerLink]="['/show-auctions']" class="flex items-center p-3 text-lg font-medium text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 rounded-lg transition duration-150">
+    <span class="md:inline hidden">Aukcije</span>
+    <span class="md:hidden block">A</span>
+  </a>
+
+  <a [routerLink]="['/show-auctions']" class="flex items-center p-3 text-lg font-medium text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 rounded-lg transition duration-150">
+    <span class="md:inline hidden">Prikaz Aukcija</span>
+    <span class="md:hidden block">A</span>
+  </a>
+</nav>
     </div>
 
     <button (click)="logOutUser()" class="w-full py-3 bg-red-500 text-white font-semibold rounded-lg hover:bg-red-600 transition duration-150">

@@ -12,12 +12,14 @@ import { Auction } from '../../models/auction.model';
 import { of } from 'rxjs';
 import { catchError, finalize } from 'rxjs/operators';
 import { AuctionCardComponent } from '../auction-card/auction-card';
+import { RouterModule } from '@angular/router';
+
 
 
 
 @Component({
   selector: 'app-user-profile',
-  imports: [MatDialogModule, CommonModule, AuctionCardComponent],
+  imports: [MatDialogModule, CommonModule, AuctionCardComponent,RouterModule],
   templateUrl: './user-profile.html',
   styleUrl: './user-profile.css'
 })
