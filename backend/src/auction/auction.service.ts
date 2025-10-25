@@ -4,6 +4,7 @@ import {
   ForbiddenException,
   Injectable,
   NotFoundException,
+  BadRequestException,
 } from '@nestjs/common';
 import { DataSource, Repository, Between } from 'typeorm';
 import { Auction } from './auction.entity';
@@ -13,6 +14,7 @@ import { CreateAuctionItemDto } from '../dto/createAuctionItem.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Bid } from 'src/bid/bid.entity';
 import { AuctionGateway } from './auction.gateway';
+import { UpdateAuctionDto, UpdateItemDto } from 'src/dto/update.dto';
 
 @Injectable()
 export class AuctionService {
@@ -175,5 +177,74 @@ export class AuctionService {
       relations: ['items', 'items.vlasnik', 'bidsList', 'seller'],
       order: { endDate: 'ASC' },
     });
+  }
+  async updateAuction(
+    auctionId: number,
+    userId: number,
+    updateData: UpdateAuctionDto,
+  ): Promise<Auction> {
+    const auction = await this.auctionRepository.findOne({
+      where: { id: auctionId },
+      relations: ['seller', 'items', 'bidsList'],
+    });
+
+    if (!auction) {
+      throw new NotFoundException(`Aukcija ID ${auctionId} nije pronađena.`);
+    }
+
+    if (auction.seller.id !== userId) {
+      throw new ForbiddenException('Možete menjati samo sopstvene aukcije.');
+    }
+
+    if (updateData.endDate) {
+      const newEndDate = new Date(updateData.endDate);
+
+      if (isNaN(newEndDate.getTime())) {
+        throw new BadRequestException('Neispravan format datuma za endDate.');
+      }
+
+      if (newEndDate.getTime() <= auction.endDate.getTime()) {
+        throw new ForbiddenException(
+          'Nije moguće skratiti trajanje aukcije, samo ga produžiti.',
+        );
+      }
+      auction.endDate = newEndDate;
+    }
+
+    if (updateData.itemUpdate && auction.items && auction.items.length > 0) {
+      const item: Item = auction.items[0];
+      const itemUpdate: UpdateItemDto = updateData.itemUpdate;
+
+      if (itemUpdate.opis) item.opis = itemUpdate.opis;
+      if (itemUpdate.kategorija) item.kategorija = itemUpdate.kategorija;
+      if (itemUpdate.stanje) item.stanje = itemUpdate.stanje;
+      if (itemUpdate.slike) item.slike = itemUpdate.slike;
+
+      await this.dataSource.manager.save(Item, item);
+    }
+
+    return this.auctionRepository.save(auction);
+  }
+
+  async deleteAuction(auctionId: number, userId: number): Promise<void> {
+    const auction = await this.auctionRepository.findOne({
+      where: { id: auctionId },
+      relations: ['seller'],
+    });
+
+    if (!auction) {
+      throw new NotFoundException(`Ne postoji`);
+    }
+    if (auction.seller.id !== userId) {
+      throw new ForbiddenException('Možete obrisati samo sopstvene aukcije.');
+    }
+
+    const result = await this.auctionRepository.delete(auctionId);
+
+    if (result.affected === 0) {
+      throw new NotFoundException(
+        `Aukcija ID ${auctionId} nije pronađena za brisanje.`,
+      );
+    }
   }
 }

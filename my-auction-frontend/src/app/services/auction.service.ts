@@ -3,6 +3,8 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Auction } from '../models/auction.model';
 import { User } from '../models/user.model';
+import { UpdateAuctionDto, UpdateItemDto } from '../models/dtos/update.dto';
+
 
 @Injectable({
   providedIn: 'root'
@@ -40,5 +42,12 @@ export class AuctionService {
 
   getEndingSoonAuctions(): Observable<Auction[]> {
     return this.http.get<Auction[]>(`${this.baseUrl}/endingSoon`);
+  }
+
+  updateAuction(auctionId: number, data: UpdateAuctionDto): Observable<Auction> {
+    return this.http.patch<Auction>(`${this.baseUrl}/${auctionId}`, data);
+  }
+  deleteAuction(auctionId: number): Observable<void> {
+    return this.http.delete<void>(`${this.baseUrl}/${auctionId}`);
   }
 }

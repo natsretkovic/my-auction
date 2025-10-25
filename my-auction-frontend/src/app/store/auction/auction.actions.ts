@@ -1,6 +1,8 @@
 import { createAction, props } from '@ngrx/store';
 import { Auction } from '../../models/auction.model';
 import { Bid } from '../../models/bid.model';
+import { UpdateAuctionDto, UpdateItemDto } from '../../models/dtos/update.dto';
+
 
 export const loadAuctions = createAction('[Auction] Load Auctions');
 export const loadAuctionsSuccess = createAction(
@@ -65,4 +67,33 @@ export const bidReceivedFromSocket = createAction(
 export const joinAuctionRoom = createAction(
   '[Auction Details] Join Auction Socket Room',
   props<{ auctionId: number }>()
+);
+export const updateAuction = createAction(
+  '[Auction Details] Update Auction Attempt',
+  props<{ auctionId: number; data: UpdateAuctionDto }>()
+);
+
+export const updateAuctionSuccess = createAction(
+  '[Auction API] Update Auction Success',
+  props<{ auction: Auction }>()
+);
+
+export const updateAuctionFailure = createAction(
+  '[Auction API] Update Auction Failure',
+  props<{ error: any }>()
+);
+
+export const deleteAuction = createAction(
+  '[Auction Details] Delete Auction Attempt',
+  props<{ auctionId: number }>()
+);
+
+export const deleteAuctionSuccess = createAction(
+  '[Auction API] Delete Auction Success',
+  props<{ auctionId: number }>()
+);
+
+export const deleteAuctionFailure = createAction(
+  '[Auction API] Delete Auction Failure',
+  props<{ error: any }>()
 );

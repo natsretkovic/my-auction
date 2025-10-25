@@ -1,10 +1,23 @@
-/* eslint-disable prettier/prettier */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
-import { Controller, Post, Body, UseGuards, Req, Get, Param, ParseIntPipe } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  UseGuards,
+  Req,
+  Get,
+  Param,
+  ParseIntPipe,
+  Patch,
+  Delete,
+  HttpCode,
+  HttpStatus,
+} from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { AuctionService } from './auction.service';
 import { CreateAuctionItemDto } from '../dto/createAuctionItem.dto';
 import { Auction } from './auction.entity';
+import { UpdateAuctionDto } from 'src/dto/update.dto';
 
 @Controller('auctions')
 export class AuctionController {
@@ -38,7 +51,7 @@ export class AuctionController {
       body.amount,
     );
   }
-   @Get('popular')
+  @Get('popular')
   async getPopular(): Promise<Auction[]> {
     return this.auctionService.getPopularAuctions();
   }
@@ -56,5 +69,27 @@ export class AuctionController {
   @Get(':id')
   async getAuctionById(@Param('id', ParseIntPipe) id: number) {
     return this.auctionService.getAuctionById(id);
+  }
+
+  @UseGuards(AuthGuard('jwt'))
+  @Patch(':id')
+  async updateAuction(
+    @Param('id', ParseIntPipe) id: number,
+    @Req() req,
+    @Body() updateData: UpdateAuctionDto,
+  ): Promise<Auction> {
+    const userId = parseInt(req.user.userId, 10);
+    return this.auctionService.updateAuction(id, userId, updateData);
+  }
+
+  @UseGuards(AuthGuard('jwt'))
+  @Delete(':id')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async deleteAuction(
+    @Param('id', ParseIntPipe) id: number,
+    @Req() req,
+  ): Promise<void> {
+    const userId = parseInt(req.user.userId, 10);
+    await this.auctionService.deleteAuction(id, userId);
   }
 }

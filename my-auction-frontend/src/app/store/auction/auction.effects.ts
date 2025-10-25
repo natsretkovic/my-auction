@@ -2,10 +2,11 @@ import { Injectable,inject } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { AuctionService } from '../../services/auction.service';
 import * as AuctionActions from './auction.actions';
-import { catchError, map, mergeMap, of } from 'rxjs';
+import { catchError, map, mergeMap, of, switchMap } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { SocketService } from '../../services/socket.service';
 import { Auction } from '../../models/auction.model';
+
 @Injectable()
 export class AuctionEffects {
   private actions$: Actions = inject(Actions);
@@ -65,4 +66,31 @@ export class AuctionEffects {
         ),
         { dispatch: false }
     );
+
+  updateAuction$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(AuctionActions.updateAuction),
+      switchMap(action =>
+        this.auctionService.updateAuction(action.auctionId, action.data).pipe(
+          map(auction => {
+             alert('Aukcija uspešno ažurirana!');
+             return AuctionActions.updateAuctionSuccess({ auction });
+          }),
+          catchError(error => of(AuctionActions.updateAuctionFailure({ error })))
+        )
+      )
+    )
+  );
+
+  deleteAuction$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(AuctionActions.deleteAuction),
+      switchMap(action =>
+        this.auctionService.deleteAuction(action.auctionId).pipe(
+          map(() => AuctionActions.deleteAuctionSuccess({ auctionId: action.auctionId })), 
+          catchError(error => of(AuctionActions.deleteAuctionFailure({ error })))
+        )
+      )
+    )
+  );
 }
