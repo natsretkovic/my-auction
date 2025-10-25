@@ -6,7 +6,7 @@ import {
   NotFoundException,
   BadRequestException,
 } from '@nestjs/common';
-import { DataSource, Repository, Between } from 'typeorm';
+import { DataSource, Repository, Between, LessThan } from 'typeorm';
 import { Auction } from './auction.entity';
 import { Item } from '../item/item.entity';
 import { User } from '../user/user.entity';
@@ -15,6 +15,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Bid } from 'src/bid/bid.entity';
 import { AuctionGateway } from './auction.gateway';
 import { UpdateAuctionDto, UpdateItemDto } from 'src/dto/update.dto';
+import { Cron, CronExpression } from '@nestjs/schedule';
 
 @Injectable()
 export class AuctionService {
@@ -48,11 +49,11 @@ export class AuctionService {
       await manager.save(Item, newItem);
       const newAuction = manager.create(Auction, {
         startingPrice: dto.startingPrice,
-        active: true,
+        status: true,
         seller: seller,
         startDate: new Date(dto.startDate),
         endDate: new Date(dto.endDate),
-        items: [newItem],
+        item: newItem,
       });
       const savedAuction = await manager.save(Auction, newAuction);
       newItem.auction = savedAuction;
@@ -64,7 +65,7 @@ export class AuctionService {
   async getAuctionsByUser(userId: number): Promise<Auction[]> {
     return this.auctionRepository.find({
       where: { seller: { id: userId } },
-      relations: ['items', 'bidsList', 'seller'],
+      relations: ['item', 'item.vlasnik', 'bidsList', 'seller'],
     });
   }
   async placeBid(
@@ -74,14 +75,14 @@ export class AuctionService {
   ): Promise<Bid> {
     const auction = await this.auctionRepository.findOne({
       where: { id: auctionId },
-      relations: ['items', 'items.vlasnik'],
+      relations: ['item', 'item.vlasnik'],
     });
 
     if (!auction) {
       throw new NotFoundException(`Aukcija sa ID ${auctionId} nije pronađena`);
     }
 
-    const isOwner = auction.items.some((item) => item.vlasnik?.id === userId);
+    const isOwner = auction.item.vlasnik?.id === userId;
     if (isOwner) {
       throw new ForbiddenException(
         'Ne možete licitirati na sopstvenu aukciju.',
@@ -106,7 +107,7 @@ export class AuctionService {
   async getAuctionById(id: number): Promise<Auction> {
     const auction = await this.auctionRepository.findOne({
       where: { id },
-      relations: ['items', 'items.vlasnik', 'bidsList', 'bidsList.user'],
+      relations: ['item', 'item.vlasnik', 'bidsList', 'bidsList.user'],
     });
 
     if (!auction) {
@@ -124,31 +125,13 @@ export class AuctionService {
         startDate: new Date(),
         endDate: new Date(Date.now() + 3600 * 1000),
         seller: { id: 1, username: 'Prodavac1' } as any,
-        items: [
-          {
-            id: 1,
-            naziv: 'Predmet 1',
-            slike: ['https://placehold.co/200x200'],
-          } as any,
-        ],
+        item: {
+          itemId: 1,
+          naziv: 'Predmet 1',
+          slike: ['https://placehold.co/200x200'],
+        } as any,
         bidsList: [],
-      } as Auction,
-      {
-        id: 2,
-        startingPrice: 2000,
-        active: true,
-        startDate: new Date(),
-        endDate: new Date(Date.now() + 7200 * 1000),
-        seller: { id: 2, username: 'Prodavac2' } as any,
-        items: [
-          {
-            id: 2,
-            naziv: 'Predmet 2',
-            slike: ['https://placehold.co/200x200'],
-          } as any,
-        ],
-        bidsList: [],
-      } as Auction,
+      } as unknown as Auction,
     ];
     /*return this.auctionRepository
       .createQueryBuilder('auction')
@@ -162,7 +145,7 @@ export class AuctionService {
   }
   async getRecentAuctions(): Promise<Auction[]> {
     return this.auctionRepository.find({
-      relations: ['items', 'items.vlasnik', 'bidsList', 'seller'],
+      relations: ['item', 'item.vlasnik', 'bidsList', 'seller'],
       order: { startDate: 'DESC' },
       take: 10,
     });
@@ -173,8 +156,8 @@ export class AuctionService {
     next24h.setHours(now.getHours() + 24);
 
     return this.auctionRepository.find({
-      where: { endDate: Between(now, next24h), active: true },
-      relations: ['items', 'items.vlasnik', 'bidsList', 'seller'],
+      where: { endDate: Between(now, next24h), status: true },
+      relations: ['item', 'item.vlasnik', 'bidsList', 'seller'],
       order: { endDate: 'ASC' },
     });
   }
@@ -185,7 +168,7 @@ export class AuctionService {
   ): Promise<Auction> {
     const auction = await this.auctionRepository.findOne({
       where: { id: auctionId },
-      relations: ['seller', 'items', 'bidsList'],
+      relations: ['seller', 'item', 'bidsList'],
     });
 
     if (!auction) {
@@ -211,8 +194,8 @@ export class AuctionService {
       auction.endDate = newEndDate;
     }
 
-    if (updateData.itemUpdate && auction.items && auction.items.length > 0) {
-      const item: Item = auction.items[0];
+    if (updateData.itemUpdate && auction.item) {
+      const item: Item = auction.item;
       const itemUpdate: UpdateItemDto = updateData.itemUpdate;
 
       if (itemUpdate.opis) item.opis = itemUpdate.opis;
@@ -246,5 +229,66 @@ export class AuctionService {
         `Aukcija ID ${auctionId} nije pronađena za brisanje.`,
       );
     }
+  }
+  async expireAuction(auctionId: number): Promise<Auction> {
+    const auction = await this.getAuctionById(auctionId);
+
+    if (!auction.status) return auction;
+
+    auction.status = false;
+
+    const updatedAuction = await this.auctionRepository.save(auction);
+
+    const roomName = `auction:${auctionId}`;
+    this.auctionGateway.server
+      .to(roomName)
+      .emit('auctionExpired', { auction: updatedAuction });
+
+    return updatedAuction;
+  }
+
+  @Cron(CronExpression.EVERY_30_SECONDS)
+  async handleExpiredAuctions() {
+    await this.expireAllExpiredAuctions();
+  }
+
+  async expireAllExpiredAuctions(): Promise<void> {
+    const now = new Date();
+
+    const expiredAuctions = await this.auctionRepository.find({
+      where: { status: true, endDate: LessThan(now) },
+      relations: ['item', 'seller', 'bidsList'],
+    });
+
+    for (const auction of expiredAuctions) {
+      await this.expireAuction(auction.id);
+    }
+
+    console.log(`${expiredAuctions.length} aukcija je završeno.`);
+  }
+  async getUserBids(userId: number) {
+    const bids = await this.bidRepository.find({
+      where: { user: { id: userId } },
+      relations: [
+        'auction',
+        'auction.item',
+        'auction.bidsList',
+        'auction.seller',
+      ],
+    });
+
+    return bids.map((bid) => {
+      const auction = bid.auction;
+      const highestBid = Math.max(...auction.bidsList.map((b) => b.ponuda));
+
+      return {
+        auctionId: auction.id,
+        item: auction.item,
+        ended: !auction.status,
+        userBid: bid.ponuda,
+        highestBid,
+        won: !auction.status && bid.ponuda === highestBid,
+      };
+    });
   }
 }

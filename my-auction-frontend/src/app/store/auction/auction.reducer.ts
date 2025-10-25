@@ -102,5 +102,23 @@ export const auctionReducer = createReducer(
         auctions: updatedAuctions,
         selectedAuction: state.selectedAuction?.id === auction.id ? auction : state.selectedAuction,
     };
-  })
+  }),
+  on(AuctionActions.expireAuction, (state, { auctionId }) => {
+  const updatedAuctions = state.auctions.map(a =>
+    a.id === auctionId ? { ...a, status: false } : a
+  );
+
+  return {
+    ...state,
+    auctions: updatedAuctions,
+    selectedAuction:
+      state.selectedAuction?.id === auctionId
+        ? { ...state.selectedAuction, status: false }
+        : state.selectedAuction,
+  };
+ }),
+ on(AuctionActions.loadUserBidsSuccess, (state, { userBids }) => ({
+    ...state,
+    userBids,
+  }))
 );

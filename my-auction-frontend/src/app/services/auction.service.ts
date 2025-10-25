@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { Auction } from '../models/auction.model';
 import { User } from '../models/user.model';
 import { UpdateAuctionDto, UpdateItemDto } from '../models/dtos/update.dto';
+import { MyBidDto } from '../models/dtos/my.bid.dto';
 
 
 @Injectable({
@@ -50,4 +51,10 @@ export class AuctionService {
   deleteAuction(auctionId: number): Observable<void> {
     return this.http.delete<void>(`${this.baseUrl}/${auctionId}`);
   }
+  expireAuction(id: number): Observable<void> {
+  return this.http.put<void>(`/api/auctions/${id}/expire`, {});
+ }
+ getMyBids(): Observable<MyBidDto[]> {
+  return this.http.get<MyBidDto[]>(`${this.baseUrl}/my-bids`);
+}
 }

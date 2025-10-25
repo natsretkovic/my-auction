@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import {
   Controller,
@@ -66,6 +67,12 @@ export class AuctionController {
     return this.auctionService.getEndingSoonAuctions();
   }
   @UseGuards(AuthGuard('jwt'))
+  @Get('my-bids')
+  async getMyBids(@Req() req) {
+    const userId = parseInt(req.user.userId, 10);
+    return this.auctionService.getUserBids(userId);
+  }
+  @UseGuards(AuthGuard('jwt'))
   @Get(':id')
   async getAuctionById(@Param('id', ParseIntPipe) id: number) {
     return this.auctionService.getAuctionById(id);
@@ -91,5 +98,11 @@ export class AuctionController {
   ): Promise<void> {
     const userId = parseInt(req.user.userId, 10);
     await this.auctionService.deleteAuction(id, userId);
+  }
+
+  @UseGuards(AuthGuard('jwt'))
+  @Patch(':id/expire')
+  expireAuction(@Param('id') id: number) {
+    return this.auctionService.expireAuction(+id);
   }
 }

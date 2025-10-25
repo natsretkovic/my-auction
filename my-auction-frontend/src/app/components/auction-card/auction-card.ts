@@ -14,7 +14,7 @@ export class AuctionCardComponent {
   constructor(private router: Router) {}
 
     get mainImage(): string {
-    const firstItem = this.auction?.items?.[0];
+    const firstItem = this.auction?.item;
     if (!firstItem) return '';
     const slike = firstItem.slike;
     return slike && slike.length > 0 ? slike[0] : '';

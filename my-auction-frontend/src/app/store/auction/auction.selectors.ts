@@ -32,3 +32,7 @@ export const selectHighestBid = createSelector(
   selectBidsForSelectedAuction,
   (bids) => bids.length ? Math.max(...bids.map(b => b.ponuda)) : 0
 );
+export const selectUserBids = createSelector(
+  selectAuctionState,
+  (state) => state.userBids
+);

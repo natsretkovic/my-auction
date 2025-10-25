@@ -4,6 +4,8 @@ import {
   Column,
   ManyToOne,
   OneToMany,
+  OneToOne,
+  JoinColumn,
 } from 'typeorm';
 import { User } from '../user/user.entity';
 import { Item } from '../item/item.entity';
@@ -17,8 +19,8 @@ export class Auction {
   @Column()
   startingPrice: number;
 
-  @Column({ default: false })
-  active: boolean;
+  @Column({ default: true })
+  status: boolean;
 
   @Column({ type: 'timestamptz' })
   startDate: Date;
@@ -29,8 +31,9 @@ export class Auction {
   @ManyToOne(() => User, (user) => user.auctions)
   seller: User;
 
-  @OneToMany(() => Item, (item) => item.auction, { cascade: true })
-  items: Item[];
+  @OneToOne(() => Item, { cascade: true })
+  @JoinColumn()
+  item: Item;
 
   @OneToMany(() => Bid, (bid) => bid.auction, { cascade: true })
   bidsList: Bid[];

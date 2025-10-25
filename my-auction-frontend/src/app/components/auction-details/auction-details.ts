@@ -64,7 +64,8 @@ export class AuctionDetailsComponent implements OnInit {
       map(auction => auction?.endDate),
       switchMap(endDateString => {
         if (!endDateString) {
-          return new Observable<string>(subscriber => subscriber.complete()).pipe(startWith('...')); 
+          return new Observable<string>(subscriber =>
+           subscriber.complete()).pipe(startWith('...')); 
         }
         
         const auctionEndTime = dayjs(endDateString, 'YYYY-MM-DD HH:mm:ssZ'); 
@@ -75,7 +76,10 @@ export class AuctionDetailsComponent implements OnInit {
             const now = dayjs();
             const diffInMs = auctionEndTime.diff(now);
             
-            if (diffInMs <= 0) return '00:00:00';
+            if (diffInMs <= 0) {
+              this.store.dispatch({type: '[Auction] Expire Auction', auctionId: auctionId});
+              return '00:00:00'
+            };
             
             const totalSeconds = Math.floor(diffInMs / 1000);
             const hours = Math.floor(totalSeconds / 3600);
@@ -102,12 +106,11 @@ export class AuctionDetailsComponent implements OnInit {
       map(([auction, localBid, remainingTime]) => {
         if (!auction) return null;
 
-        if (auction.items?.length > 0) {
-          this.isOwner = auction.items.some(item => item.vlasnik?.id === this.currentUser?.id);
-          const firstItem = auction.items[0];
-          if (firstItem?.slike?.length) {
-            this.currentMainImage = firstItem.slike[0];
-          }
+        if (auction.item) {
+          this.isOwner = auction.item.vlasnik?.id === this.currentUser?.id;
+           if (auction.item.slike?.length) {
+             this.currentMainImage = auction.item.slike[0];
+           }
         }
 
         const highestBid = auction.bidsList?.length
@@ -121,7 +124,7 @@ export class AuctionDetailsComponent implements OnInit {
             auction: { ...auction },
             remainingTime,
             currentPrice,
-            isOwner: auction.items?.some(item => item.vlasnik?.id === this.currentUser?.id) || false
+            isOwner: auction.item?.vlasnik?.id === this.currentUser?.id || false
         } as CombinedAuctionData;
       })
     );

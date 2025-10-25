@@ -6,6 +6,7 @@ import { catchError, map, mergeMap, of, switchMap } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { SocketService } from '../../services/socket.service';
 import { Auction } from '../../models/auction.model';
+import { MyBidDto } from '../../models/dtos/my.bid.dto';
 
 @Injectable()
 export class AuctionEffects {
@@ -89,6 +90,28 @@ export class AuctionEffects {
         this.auctionService.deleteAuction(action.auctionId).pipe(
           map(() => AuctionActions.deleteAuctionSuccess({ auctionId: action.auctionId })), 
           catchError(error => of(AuctionActions.deleteAuctionFailure({ error })))
+        )
+      )
+    )
+  );
+  expireAuction$ = createEffect(() =>
+  this.actions$.pipe(
+    ofType(AuctionActions.expireAuction),
+    switchMap(({ auctionId }) =>
+      this.auctionService.expireAuction(auctionId).pipe(
+        map(() => AuctionActions.expireAuctionSuccess({ auctionId })),
+        catchError(error => of(AuctionActions.expireAuctionFailure({ error })))
+        )
+      )
+    )
+  );
+  loadUserBids$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(AuctionActions.loadUserBids),
+      mergeMap(() =>
+        this.auctionService.getMyBids().pipe(
+          map((bids: MyBidDto[]) => AuctionActions.loadUserBidsSuccess({ userBids: bids })),
+          catchError((error) => of(AuctionActions.loadUserBidsFailure({ error })))
         )
       )
     )

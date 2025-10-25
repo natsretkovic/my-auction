@@ -2,6 +2,7 @@ import { createAction, props } from '@ngrx/store';
 import { Auction } from '../../models/auction.model';
 import { Bid } from '../../models/bid.model';
 import { UpdateAuctionDto, UpdateItemDto } from '../../models/dtos/update.dto';
+import { MyBidDto } from '../../models/dtos/my.bid.dto';
 
 
 export const loadAuctions = createAction('[Auction] Load Auctions');
@@ -95,5 +96,28 @@ export const deleteAuctionSuccess = createAction(
 
 export const deleteAuctionFailure = createAction(
   '[Auction API] Delete Auction Failure',
+  props<{ error: any }>()
+);
+export const expireAuction = createAction(
+  '[Auction] Expire Auction',
+  props<{ auctionId: number }>()
+);
+
+export const expireAuctionSuccess = createAction(
+  '[Auction] Expire Auction Success',
+  props<{ auctionId: number }>()
+);
+
+export const expireAuctionFailure = createAction(
+  '[Auction] Expire Auction Failure',
+  props<{ error: any }>()
+);
+export const loadUserBids = createAction('[Auction] Load User Bids');
+export const loadUserBidsSuccess = createAction(
+  '[Auction] Load User Bids Success',
+  props<{ userBids: MyBidDto[] }>()
+);
+export const loadUserBidsFailure = createAction(
+  '[Auction] Load User Bids Failure',
   props<{ error: any }>()
 );

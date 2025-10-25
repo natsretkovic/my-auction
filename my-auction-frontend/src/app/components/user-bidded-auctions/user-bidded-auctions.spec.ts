@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { UserProfileComponent } from './user-profile';
+import { UserBiddedAuctions } from './user-bidded-auctions';
 
-describe('UserProfile', () => {
-  let component: UserProfileComponent;
-  let fixture: ComponentFixture<UserProfileComponent>;
+describe('UserBiddedAuctions', () => {
+  let component: UserBiddedAuctions;
+  let fixture: ComponentFixture<UserBiddedAuctions>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [UserProfileComponent]
+      imports: [UserBiddedAuctions]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(UserProfileComponent);
+    fixture = TestBed.createComponent(UserBiddedAuctions);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

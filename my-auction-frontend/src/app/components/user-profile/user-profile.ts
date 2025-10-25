@@ -14,9 +14,6 @@ import { catchError, finalize } from 'rxjs/operators';
 import { AuctionCardComponent } from '../auction-card/auction-card';
 import { RouterModule } from '@angular/router';
 
-
-
-
 @Component({
   selector: 'app-user-profile',
   imports: [MatDialogModule, CommonModule, AuctionCardComponent,RouterModule],

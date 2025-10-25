@@ -3,14 +3,10 @@ import { Item } from "./item.model";
 
 export interface Auction {
   id: number,
-  naziv: string;
-  opis: string;
-  kategorija: string;
-  stanje: string;
   startDate: string;
   endDate: string;
-  slike?: string[];
   bidsList: Bid[];
-  items: Item[];
+  item: Item;
   startingPrice: number;
+  status: boolean; // 1 aktivna 0 istekla
 }

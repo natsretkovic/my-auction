@@ -1,0 +1,17 @@
+<div *ngFor="let bid of userBids$ | async" class="mb-4 p-4 border rounded-lg shadow-sm">
+  <h3 class="text-lg font-semibold text-gray-800">{{ bid.item.naziv }}</h3>
+
+  <p class="text-gray-600">
+    Vaša ponuda: <span class="font-medium">{{ bid.userBid }} din</span><br>
+    Najviša ponuda: <span class="font-medium">{{ bid.highestBid }} din</span>
+  </p>
+
+  <p class="text-sm mt-2">
+    Status: 
+    <span *ngIf="bid.ended">
+      <span *ngIf="bid.won" class="text-green-600 font-semibold">Pobedili ste!</span>
+      <span *ngIf="!bid.won" class="text-red-600 font-semibold">Niste pobedili</span>
+    </span>
+    <span *ngIf="!bid.ended" class="text-blue-600 font-semibold">Aktivna aukcija</span>
+  </p>
+</div>

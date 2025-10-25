@@ -5,6 +5,7 @@ import { RegisterComponent } from './components/registerComponent/register.compo
 import { UserProfileComponent } from './components/user-profile/user-profile';
 import { AuctionDetailsComponent } from './components/auction-details/auction-details';
 import { ShowAuctionsComponent } from './components/show-auctions/show-auctions';
+import { UserBiddedAuctions } from './components/user-bidded-auctions/user-bidded-auctions';
 
 export const routes: Routes = [
   { path: '', component: WelcomeComponent },
@@ -12,5 +13,6 @@ export const routes: Routes = [
   { path: 'register', component: RegisterComponent },
   { path: 'profile', component: UserProfileComponent},
   { path: 'auction/:id', component: AuctionDetailsComponent},
-  { path: 'show-auctions', component: ShowAuctionsComponent}
+  { path: 'show-auctions', component: ShowAuctionsComponent},
+  {path: 'my-bids', component: UserBiddedAuctions}
 ];

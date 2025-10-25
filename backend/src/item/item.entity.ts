@@ -1,4 +1,11 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  ManyToOne,
+  OneToOne,
+  JoinColumn,
+} from 'typeorm';
 import { User } from '../user/user.entity';
 import { Auction } from '../auction/auction.entity';
 import { ItemCategory } from 'src/enums/itemCategory.enum';
@@ -32,9 +39,10 @@ export class Item {
   })
   stanje: ItemStatus;
 
-  @ManyToOne(() => User, (user) => user.auctions)
+  @ManyToOne(() => User)
   vlasnik!: User;
 
-  @ManyToOne(() => Auction, (auction) => auction.items)
+  @OneToOne(() => Auction, (auction) => auction.item)
+  @JoinColumn()
   auction!: Auction;
 }
