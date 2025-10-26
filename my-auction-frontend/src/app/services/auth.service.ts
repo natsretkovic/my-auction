@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { User } from '@supabase/supabase-js';
 
 @Injectable({
   providedIn: 'root'
@@ -23,5 +24,8 @@ export class AuthService {
    logout(): void {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
+  }
+  getProfilById(userId: number): Observable<any> {
+    return this.http.get(`${this.apiUrl}/profile/${userId}`);
   }
 }

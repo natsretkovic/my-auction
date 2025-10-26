@@ -10,6 +10,7 @@ import { User } from '../../models/user.model';
 import { AuthService } from '../../services/auth.service';
 import { loadAuctionById, selectAuction, placeBid, joinAuctionRoom } from '../../store/auction/auction.actions';
 import { selectSelectedAuction, selectAuctionLoading } from '../../store/auction/auction.selectors';
+import { RouterModule } from '@angular/router';
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc'; 
 import customParseFormat from 'dayjs/plugin/customParseFormat'; 
@@ -25,7 +26,7 @@ type CombinedAuctionData = {
 @Component({
   selector: 'app-auction-details',
   templateUrl: './auction-details.html',
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, RouterModule],
   styleUrls: ['./auction-details.css']
 })
 export class AuctionDetailsComponent implements OnInit {
@@ -59,8 +60,9 @@ export class AuctionDetailsComponent implements OnInit {
     this.store.dispatch(joinAuctionRoom({ auctionId }));
 
     const storeAuction$ = this.store.select(selectSelectedAuction);
-    storeAuction$.subscribe(a => console.log('storeAuction:', a));
-
+    storeAuction$.subscribe(a => {
+  console.log('bidsList:', a?.bidsList.map(b => ({ userId: b.user?.id, username: b.user?.username })));
+});
 
     this.remainingTime$ = storeAuction$.pipe(
       map(auction => auction?.endDate),
@@ -113,13 +115,12 @@ export class AuctionDetailsComponent implements OnInit {
            if (auction.item.slike?.length) {
              this.currentMainImage = auction.item.slike[0];
            }
-        }
+          }
 
-        const highestBid = auction.bidsList?.length
-          ? Math.max(...auction.bidsList.map(b => b.ponuda))
-          : auction.startingPrice || 0;
-
-        const currentPrice = Math.max(highestBid, localBid);
+         const currentPrice = Math.max(
+            auction.bidsList?.length ? Math.max(...auction.bidsList.map(b => b.ponuda)) : auction.startingPrice || 0,
+            localBid
+        );
 
 
         return {

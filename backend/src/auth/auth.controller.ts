@@ -7,6 +7,8 @@ import {
   UseGuards,
   Request,
   Get,
+  Param,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { CreateUserDto } from '../dto/createUser.dto';
@@ -29,6 +31,12 @@ export class AuthController {
   @Get('profile')
   async getProfile(@Request() req) {
     const userId = parseInt(req.user.userId, 10);
+    return this.authService.getProfileById(userId);
+  }
+
+  @UseGuards(AuthGuard('jwt'))
+  @Get('profile/:id')
+  async getProfileById(@Param('id', ParseIntPipe) userId: number) {
     return this.authService.getProfileById(userId);
   }
 }

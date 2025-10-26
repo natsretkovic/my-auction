@@ -58,12 +58,22 @@
           <div class="bg-white p-6 rounded-xl shadow-lg border border-gray-200">
             <h3 class="text-lg font-bold text-gray-800 mb-3 border-b pb-2">Poslednje ponude:</h3>
             <ul class="space-y-2 max-h-40 overflow-y-auto text-sm">
-              <li *ngFor="let bid of data.auction?.bidsList; let i = index" 
-                  class="flex justify-between items-center p-2 rounded-lg transition"
-                  [ngClass]="{'bg-indigo-50 font-semibold': i === 0}">
-                <span class="text-gray-700">{{ bid.user?.username || 'Anonimni korisnik' }}:</span>
-                <span class="font-bold text-indigo-700">{{ bid.ponuda }} dinara</span>
-              </li>
+                 <li *ngFor="let bid of data.auction?.bidsList; let i = index" 
+                      class="flex justify-between items-center p-2 rounded-lg transition"
+                      [ngClass]="{'bg-indigo-50 font-semibold': i === 0}">
+                    
+                    <a 
+                      [routerLink]="['/public-profile', bid.user.id]" 
+                      class="text-gray-700 hover:text-indigo-600 font-medium transition-colors"
+                      *ngIf="bid.user; else anonymous">
+                      {{ bid.user.username }}
+                    </a>
+                    <ng-template #anonymous>
+                      <span class="text-gray-400 italic">Anonimni korisnik</span>
+                    </ng-template>
+
+                    <span class="font-bold text-indigo-700">{{ bid.ponuda }} dinara</span>
+                  </li>
             </ul>
             <p *ngIf="!data.auction?.bidsList?.length" class="text-gray-500 text-center py-2">Nema ponuda.</p>
           </div>

@@ -1,1 +1,38 @@
-<p>public-profile works!</p>
+<div class="max-w-3xl mx-auto p-6 bg-white shadow-md rounded-lg mt-8">
+  <ng-container *ngIf="user$ | async as user">
+    <div class="mb-6">
+      <h2 class="text-2xl font-bold text-gray-800">{{ user.ime }} {{ user.prezime }}</h2>
+      <p class="text-gray-600 mt-1"><strong>Email:</strong> {{ user.email }}</p>
+      <p class="text-gray-600"><strong>Telefon:</strong> {{ user.brojTelefona }}</p>
+    </div>
+
+    <div *ngIf="averageRating$ | async as avg" class="mb-6">
+      <p class="text-lg font-semibold text-yellow-500">
+        Prosečna ocena: {{ avg.toFixed(1) }} / 5
+      </p>
+    </div>
+
+    <button
+      (click)="toggleReviewForm()"
+      class="mb-6 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
+    >
+    </button>
+
+    <div *ngIf="showReviewForm" class="mb-6 p-4 border border-gray-300 rounded bg-gray-50">
+      <p class="text-gray-700">Forma za ocenjivanje...</p>
+      <!-- Ovdje će ići input polja i dugme za slanje ocene -->
+    </div>
+
+    <div *ngIf="loading$ | async" class="mb-4 text-gray-500 italic">Učitavanje recenzija...</div>
+    <div *ngIf="error$ | async as err" class="mb-4 text-red-600 font-semibold">{{ err }}</div>
+
+    <ul class="space-y-4">
+      <li *ngFor="let review of reviews$ | async" class="p-4 bg-gray-50 border border-gray-200 rounded shadow-sm">
+        <div class="flex items-center justify-between mb-2">
+          <span class="font-semibold text-gray-800">Ocena: {{ review.ocena }} / 5</span>
+        </div>
+        <p class="text-gray-700">{{ review.comment }}</p>
+      </li>
+    </ul>
+  </ng-container>
+</div>
