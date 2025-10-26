@@ -1,33 +1,34 @@
 import { createReducer, on } from '@ngrx/store';
 import * as AuctionActions from './auction.actions';
-import { AuctionState, initialState } from './auction.state';
+import { initialState, auctionAdapter } from './auction.state';
 
 export const auctionFeatureKey = 'auction';
-
 
 export const auctionReducer = createReducer(
   initialState,
 
-  on(AuctionActions.loadAuctions, (state) => ({ ...state, loading: true, error: null })),
-  on(AuctionActions.loadAuctionsSuccess, (state, { auctions }) => ({
+  on(AuctionActions.loadAuctions, (state) => ({
     ...state,
-    auctions,
-    loading: false,
+    loading: true,
     error: null,
   })),
+  on(AuctionActions.loadAuctionsSuccess, (state, { auctions }) =>
+    auctionAdapter.setAll(auctions, { ...state, loading: false, error: null })
+  ),
   on(AuctionActions.loadAuctionsFailure, (state, { error }) => ({
     ...state,
     loading: false,
     error,
   })),
 
-  on(AuctionActions.addAuction, (state) => ({ ...state, loading: true, error: null })),
-  on(AuctionActions.addAuctionSuccess, (state, { auction }) => ({
+  on(AuctionActions.addAuction, (state) => ({
     ...state,
-    auctions: [...state.auctions, auction],
-    loading: false,
+    loading: true,
     error: null,
   })),
+  on(AuctionActions.addAuctionSuccess, (state, { auction }) =>
+    auctionAdapter.addOne(auction, { ...state, loading: false, error: null })
+  ),
   on(AuctionActions.addAuctionFailure, (state, { error }) => ({
     ...state,
     loading: false,
@@ -36,89 +37,59 @@ export const auctionReducer = createReducer(
 
   on(AuctionActions.selectAuction, (state, { auctionId }) => ({
     ...state,
-    selectedAuction: state.auctions.find(a => a.id === auctionId),
-  })),
-  on(AuctionActions.loadAuctions, state => ({
-    ...state,
-    loading: true,
-    error: null
-  })),
-  on(AuctionActions.loadAuctionsSuccess, (state, { auctions }) => ({
-    ...state,
-    auctions,
-    loading: false
-  })),
-  on(AuctionActions.loadAuctionsFailure, (state, { error }) => ({
-    ...state,
-    loading: false,
-    error
+    selectedAuctionId: auctionId,
   })),
 
-  on(AuctionActions.addAuctionSuccess, (state, { auction }) => ({
+  on(AuctionActions.placeBidSuccess, (state, { bid }) => {
+    const selectedId = state.selectedAuctionId;
+    if (!selectedId) return state;
+
+    const selectedAuction = state.entities[selectedId];
+    if (!selectedAuction) return state;
+
+    return auctionAdapter.updateOne(
+      {
+        id: selectedId,
+        changes: { bidsList: [...selectedAuction.bidsList, bid] },
+      },
+      state
+    );
+  }),
+  on(AuctionActions.placeBidFailure, (state, { error }) => ({
     ...state,
-    auctions: [...state.auctions, auction]
-  })),
-  on(AuctionActions.addAuctionFailure, (state, { error }) => ({
-    ...state,
-    error
+    error,
   })),
 
-  on(AuctionActions.loadAuctionById, state => ({
+  on(AuctionActions.bidReceivedFromSocket, (state, { auction }) =>
+    auctionAdapter.upsertOne(auction, state)
+  ),
+
+  on(AuctionActions.expireAuction, (state, { auctionId }) =>
+    auctionAdapter.updateOne(
+      {
+        id: auctionId,
+        changes: { status: false },
+      },
+      state
+    )
+  ),
+
+  on(AuctionActions.loadUserBidsSuccess, (state, { userBids }) => ({
     ...state,
-    loading: true,
-    selectedAuction: null
+    userBids,
   })),
-  on(AuctionActions.loadAuctionByIdSuccess, (state, { auction }) => ({
-    ...state,
-    loading: false,
-    selectedAuction: auction
-  })),
+    on(AuctionActions.loadAuctionByIdSuccess, (state, { auction }) =>
+    auctionAdapter.upsertOne(auction, {
+      ...state,
+      selectedAuctionId: auction.id, // postavi selektovanu aukciju
+      loading: false,
+      error: null
+    })
+  ),
+
   on(AuctionActions.loadAuctionByIdFailure, (state, { error }) => ({
     ...state,
     loading: false,
-    error
-  })),
-
-  on(AuctionActions.placeBidSuccess, (state, { bid }) => ({
-    ...state,
-    selectedAuction: state.selectedAuction
-      ? {
-          ...state.selectedAuction,
-          bidsList: [...state.selectedAuction.bidsList, bid]
-        }
-      : null
-  })),
-  on(AuctionActions.placeBidFailure, (state, { error }) => ({
-    ...state,
-    error
-  })),
-  on(AuctionActions.bidReceivedFromSocket, (state, { auction }) => {
-    const updatedAuctions = state.auctions.map(a => 
-        a.id === auction.id ? auction : a
-    );
-
-    return {
-        ...state,
-        auctions: updatedAuctions,
-        selectedAuction: state.selectedAuction?.id === auction.id ? auction : state.selectedAuction,
-    };
-  }),
-  on(AuctionActions.expireAuction, (state, { auctionId }) => {
-  const updatedAuctions = state.auctions.map(a =>
-    a.id === auctionId ? { ...a, status: false } : a
-  );
-
-  return {
-    ...state,
-    auctions: updatedAuctions,
-    selectedAuction:
-      state.selectedAuction?.id === auctionId
-        ? { ...state.selectedAuction, status: false }
-        : state.selectedAuction,
-  };
- }),
- on(AuctionActions.loadUserBidsSuccess, (state, { userBids }) => ({
-    ...state,
-    userBids,
+    error,
   }))
 );

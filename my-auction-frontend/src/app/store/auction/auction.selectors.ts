@@ -1,12 +1,27 @@
 import { createFeatureSelector, createSelector } from '@ngrx/store';
-import { AuctionState } from './auction.state';
+import { auctionAdapter, AuctionEntityState } from './auction.state';
 import { auctionFeatureKey } from './auction.reducer';
 
-export const selectAuctionState = createFeatureSelector<AuctionState>(auctionFeatureKey);
+export const selectAuctionState = createFeatureSelector<AuctionEntityState>(auctionFeatureKey);
 
-export const selectAllAuctions = createSelector(
+export const {
+  selectAll: selectAllAuctions,
+  selectEntities: selectAuctionEntities,
+} = auctionAdapter.getSelectors(selectAuctionState);
+
+export const selectSelectedAuction = createSelector(
   selectAuctionState,
-  (state) => state.auctions
+  (state) => state.selectedAuctionId ? state.entities[state.selectedAuctionId] : null
+);
+
+export const selectBidsForSelectedAuction = createSelector(
+  selectSelectedAuction,
+  (auction) => auction ? auction.bidsList : []
+);
+
+export const selectHighestBid = createSelector(
+  selectBidsForSelectedAuction,
+  (bids) => bids.length ? Math.max(...bids.map(b => b.ponuda)) : 0
 );
 
 export const selectAuctionLoading = createSelector(
@@ -19,19 +34,6 @@ export const selectAuctionError = createSelector(
   (state) => state.error
 );
 
-export const selectSelectedAuction = createSelector(
-  selectAuctionState,
-  state => state.selectedAuction ?? null
-);
-export const selectBidsForSelectedAuction = createSelector(
-  selectSelectedAuction,
-  (auction) => auction ? auction.bidsList : []
-);
-
-export const selectHighestBid = createSelector(
-  selectBidsForSelectedAuction,
-  (bids) => bids.length ? Math.max(...bids.map(b => b.ponuda)) : 0
-);
 export const selectUserBids = createSelector(
   selectAuctionState,
   (state) => state.userBids

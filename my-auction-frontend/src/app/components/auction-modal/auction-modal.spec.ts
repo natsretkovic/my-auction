@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { AuctionModal } from './auction-modal';
+import { AddAuctionModalComponent } from './auction-modal';
 
 describe('AuctionModal', () => {
-  let component: AuctionModal;
-  let fixture: ComponentFixture<AuctionModal>;
+  let component: AddAuctionModalComponent;
+  let fixture: ComponentFixture<AddAuctionModalComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [AuctionModal]
+      imports: [AddAuctionModalComponent]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(AuctionModal);
+    fixture = TestBed.createComponent(AddAuctionModalComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

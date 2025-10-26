@@ -59,6 +59,8 @@ export class AuctionDetailsComponent implements OnInit {
     this.store.dispatch(joinAuctionRoom({ auctionId }));
 
     const storeAuction$ = this.store.select(selectSelectedAuction);
+    storeAuction$.subscribe(a => console.log('storeAuction:', a));
+
 
     this.remainingTime$ = storeAuction$.pipe(
       map(auction => auction?.endDate),
@@ -136,9 +138,9 @@ export class AuctionDetailsComponent implements OnInit {
     this.currentMainImage = imageUrl;
   }
 
-  placeBid(auction: Auction): void {
+  placeBid(auctionData: CombinedAuctionData): void {
     this.bidError = null;
-    const currentPrice = this.getCurrentPrice(auction);
+    const currentPrice = auctionData.currentPrice;
 
     if (!this.bidAmount || this.bidAmount <= currentPrice) {
       this.bidError = `Ponuda mora biti veća od trenutne cene (${currentPrice})!`;
@@ -152,17 +154,10 @@ export class AuctionDetailsComponent implements OnInit {
 
     this.submittingBid = true;
 
-    this.store.dispatch(placeBid({ auctionId: auction.id, bidAmount: this.bidAmount }));
+    this.store.dispatch(placeBid({ auctionId: auctionData.auction!.id, bidAmount: this.bidAmount }));
     this.localBid$.next(this.bidAmount);
 
     this.submittingBid = false;
     this.bidAmount = 0;
-  }
-
-  getCurrentPrice(auction: Auction): number {
-    if (auction?.bidsList?.length) {
-      return Math.max(...auction.bidsList.map(b => b.ponuda));
-    }
-    return auction?.startingPrice || 0;
   }
 }

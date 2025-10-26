@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
-import { AuctionState } from '../../store/auction/auction.state';
+import { AuctionEntityState } from '../../store/auction/auction.state';
 import * as AuctionActions from '../../store/auction/auction.actions';
 import { ItemCategory } from '../../enums/itemCategory.enum';
 import { ItemStatus } from '../../enums/itemStatus.enum';
@@ -33,7 +33,7 @@ export class AddAuctionModalComponent {
   constructor(
     private fb: FormBuilder,
     private dialogRef: MatDialogRef<AddAuctionModalComponent>,
-    private store: Store<AuctionState>,
+    private store: Store<AuctionEntityState>,
     private supabaseService: SupabaseService
   ) {
     this.form = this.fb.group({
