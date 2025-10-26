@@ -16,11 +16,13 @@
       (click)="toggleReviewForm()"
       class="mb-6 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
     >
+    Oceni
     </button>
 
-    <div *ngIf="showReviewForm" class="mb-6 p-4 border border-gray-300 rounded bg-gray-50">
-      <p class="text-gray-700">Forma za ocenjivanje...</p>
-      <!-- Ovdje će ići input polja i dugme za slanje ocene -->
+     <div *ngIf="showReviewForm" class="mb-6">
+      <app-review-form
+        (reviewSubmit)="onSubmitReview($event)"
+      ></app-review-form>
     </div>
 
     <div *ngIf="loading$ | async" class="mb-4 text-gray-500 italic">Učitavanje recenzija...</div>
@@ -31,7 +33,7 @@
         <div class="flex items-center justify-between mb-2">
           <span class="font-semibold text-gray-800">Ocena: {{ review.ocena }} / 5</span>
         </div>
-        <p class="text-gray-700">{{ review.comment }}</p>
+        <p class="text-gray-700">{{ review.komentar }}</p>
       </li>
     </ul>
   </ng-container>

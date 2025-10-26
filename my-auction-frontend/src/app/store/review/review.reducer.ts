@@ -36,7 +36,7 @@ export const reviewReducer = createReducer(
   })),
 
   on(ReviewActions.loadAverageRating, (state) => ({
-    
+
     ...state,
     loading: true,
     error: null
@@ -50,5 +50,20 @@ export const reviewReducer = createReducer(
     ...state,
     loading: false,
     error
+  })),
+  on(ReviewActions.createReview, (state) => ({
+    ...state,
+    loading: true,
+    error: null,
+  })),
+  on(ReviewActions.createReviewSuccess, (state, { review }) => ({
+    ...state,
+    reviews: [...state.reviews, review],
+    loading: false,
+  })),
+  on(ReviewActions.createReviewFailure, (state, { error }) => ({
+    ...state,
+    loading: false,
+    error,
   }))
 );

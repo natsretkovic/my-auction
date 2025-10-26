@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/require-await */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import {
   ForbiddenException,
   Injectable,
@@ -116,35 +114,21 @@ export class AuctionService {
 
     return auction;
   }
-  async getPopularAuctions(): Promise<Auction[]> {
-    return [
-      {
-        id: 1,
-        startingPrice: 1000,
-        active: true,
-        startDate: new Date(),
-        endDate: new Date(Date.now() + 3600 * 1000),
-        seller: { id: 1, username: 'Prodavac1' } as any,
-        item: {
-          itemId: 1,
-          naziv: 'Predmet 1',
-          slike: ['https://placehold.co/200x200'],
-        } as any,
-        bidsList: [],
-      } as unknown as Auction,
-    ];
-    /*return this.auctionRepository
+  async getPopularAuctions(limit: number = 10): Promise<Auction[]> {
+    return await this.auctionRepository
       .createQueryBuilder('auction')
-      .leftJoinAndSelect('auction.bidsList', 'bid')
-      .leftJoinAndSelect('auction.items', 'item')
-      .leftJoinAndSelect('auction.seller', 'seller')
-      .loadRelationCountAndMap('auction.bidCount', 'auction.bidsList')
-      .orderBy('auction.bidCount', 'DESC')
-      .take(10)
-      .getMany();*/
+      .leftJoinAndSelect('auction.item', 'item')
+      .innerJoin('auction.bidsList', 'bid')
+      .where('auction.status = :status', { status: true })
+      .groupBy('auction.id')
+      .addGroupBy('item.itemID')
+      .orderBy('COUNT(bid.id)', 'DESC')
+      .limit(limit)
+      .getMany();
   }
   async getRecentAuctions(): Promise<Auction[]> {
     return this.auctionRepository.find({
+      where: { status: true },
       relations: ['item', 'item.vlasnik', 'bidsList', 'seller'],
       order: { startDate: 'DESC' },
       take: 10,

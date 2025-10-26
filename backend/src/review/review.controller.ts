@@ -10,6 +10,7 @@ import {
   UseGuards,
   Request,
   ParseIntPipe,
+  NotFoundException,
 } from '@nestjs/common';
 import { ReviewService } from './review.service';
 import { CreateReviewDto } from '../dto/review.dto';
@@ -42,6 +43,9 @@ export class ReviewController {
   ) {
     const buyer = req.user;
     const seller = await this.userService.findUserById(sellerId);
-    return this.reviewService.createReview(buyer, seller!, createReviewDto);
+    if (!seller) {
+      throw new NotFoundException('Seller not found.');
+    }
+    return this.reviewService.createReview(buyer, seller, createReviewDto);
   }
 }

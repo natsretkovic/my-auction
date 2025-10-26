@@ -60,9 +60,6 @@ export class AuctionDetailsComponent implements OnInit {
     this.store.dispatch(joinAuctionRoom({ auctionId }));
 
     const storeAuction$ = this.store.select(selectSelectedAuction);
-    storeAuction$.subscribe(a => {
-  console.log('bidsList:', a?.bidsList.map(b => ({ userId: b.user?.id, username: b.user?.username })));
-});
 
     this.remainingTime$ = storeAuction$.pipe(
       map(auction => auction?.endDate),
