@@ -7,6 +7,16 @@ export interface AuctionEntityState extends EntityState<Auction> {
   loading: boolean;
   error: string | null;
   userBids: MyBidDto[];
+  popularAuctionIds: number[] | null;
+  recentAuctionIds: number[] | null;
+  endingSoonAuctionIds: number[] | null;
+
+  initialLoading: boolean; // frokJoin
+  initialError: string | null;
+
+  searchAuctionIds: number[] | null;
+  searchLoading: boolean;
+  searchError: string | null;
 }
 
 export const auctionAdapter = createEntityAdapter<Auction>({
@@ -17,5 +27,13 @@ export const initialState: AuctionEntityState = auctionAdapter.getInitialState({
   selectedAuctionId: null,
   loading: false,
   error: null,
-  userBids: []
+  userBids: [],
+  popularAuctionIds: null,
+  recentAuctionIds: null,
+  endingSoonAuctionIds: null,
+  initialLoading: false,
+  initialError: null,
+  searchAuctionIds: null,
+  searchLoading: false,
+  searchError: null,
 });

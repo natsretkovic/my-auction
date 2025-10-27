@@ -53,8 +53,13 @@ export class AuctionService {
   }
   expireAuction(id: number): Observable<void> {
   return this.http.put<void>(`/api/auctions/${id}/expire`, {});
+  }
+  getMyBids(): Observable<MyBidDto[]> {
+    return this.http.get<MyBidDto[]>(`${this.baseUrl}/my-bids`);
+  }
+  searchAuctions( keyword: string ): Observable<Auction[]> {
+  return this.http.get<Auction[]>(`${this.baseUrl}/search`, {
+    params: { keyword }
+  });
  }
- getMyBids(): Observable<MyBidDto[]> {
-  return this.http.get<MyBidDto[]>(`${this.baseUrl}/my-bids`);
-}
 }

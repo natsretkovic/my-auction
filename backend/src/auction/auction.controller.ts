@@ -13,6 +13,7 @@ import {
   Delete,
   HttpCode,
   HttpStatus,
+  Query,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { AuctionService } from './auction.service';
@@ -20,11 +21,11 @@ import { CreateAuctionItemDto } from '../dto/createAuctionItem.dto';
 import { Auction } from './auction.entity';
 import { UpdateAuctionDto } from 'src/dto/update.dto';
 
+@UseGuards(AuthGuard('jwt'))
 @Controller('auctions')
 export class AuctionController {
   constructor(private readonly auctionService: AuctionService) {}
 
-  @UseGuards(AuthGuard('jwt'))
   @Post('addAuction')
   async addAuction(@Body() dto: CreateAuctionItemDto, @Req() req) {
     const sellerId = parseInt(req.user.userId, 10);
@@ -34,13 +35,11 @@ export class AuctionController {
       auction: savedAuction,
     };
   }
-  @UseGuards(AuthGuard('jwt'))
   @Get('myAuctions')
   async getMyAuctions(@Req() req): Promise<Auction[]> {
     const userId = parseInt(req.user.userId, 10);
     return this.auctionService.getAuctionsByUser(userId);
   }
-  @UseGuards(AuthGuard('jwt'))
   @Post('bid')
   async placeBid(
     @Req() req,
@@ -66,19 +65,23 @@ export class AuctionController {
   async getEndingSoon(): Promise<Auction[]> {
     return this.auctionService.getEndingSoonAuctions();
   }
-  @UseGuards(AuthGuard('jwt'))
   @Get('my-bids')
   async getMyBids(@Req() req) {
     const userId = parseInt(req.user.userId, 10);
     return this.auctionService.getUserBids(userId);
   }
-  @UseGuards(AuthGuard('jwt'))
+  @Get('search')
+  async findActiveAuctions(
+    @Query('keyword') keyword?: string,
+  ): Promise<Auction[]> {
+    console.log('Keyword primljen:', keyword);
+    return this.auctionService.searchAuctions(keyword || ' ');
+  }
   @Get(':id')
   async getAuctionById(@Param('id', ParseIntPipe) id: number) {
     return this.auctionService.getAuctionById(id);
   }
 
-  @UseGuards(AuthGuard('jwt'))
   @Patch(':id')
   async updateAuction(
     @Param('id', ParseIntPipe) id: number,
@@ -89,7 +92,6 @@ export class AuctionController {
     return this.auctionService.updateAuction(id, userId, updateData);
   }
 
-  @UseGuards(AuthGuard('jwt'))
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
   async deleteAuction(
@@ -100,7 +102,6 @@ export class AuctionController {
     await this.auctionService.deleteAuction(id, userId);
   }
 
-  @UseGuards(AuthGuard('jwt'))
   @Patch(':id/expire')
   expireAuction(@Param('id') id: number) {
     return this.auctionService.expireAuction(+id);

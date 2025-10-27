@@ -2,7 +2,7 @@ import { Injectable,inject } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { AuctionService } from '../../services/auction.service';
 import * as AuctionActions from './auction.actions';
-import { catchError, map, mergeMap, of, switchMap } from 'rxjs';
+import { catchError, map, mergeMap, of, switchMap, forkJoin } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { SocketService } from '../../services/socket.service';
 import { Auction } from '../../models/auction.model';
@@ -112,6 +112,42 @@ export class AuctionEffects {
         this.auctionService.getMyBids().pipe(
           map((bids: MyBidDto[]) => AuctionActions.loadUserBidsSuccess({ userBids: bids })),
           catchError((error) => of(AuctionActions.loadUserBidsFailure({ error })))
+        )
+      )
+    )
+  );
+  loadInitialAuctions$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(AuctionActions.loadInitialAuctions),
+      switchMap(() =>
+        forkJoin({
+          popular: this.auctionService.getPopularAuctions(),
+          recent: this.auctionService.getRecentAuctions(),
+          endingSoon: this.auctionService.getEndingSoonAuctions(),
+        }).pipe(
+          map(result => 
+            AuctionActions.loadInitialAuctionsSuccess({ 
+                popular: result.popular,
+                recent: result.recent,
+                endingSoon: result.endingSoon,
+            })
+          ),
+          catchError(error => 
+            of(AuctionActions.loadInitialAuctionsFailure({ error: error.message || 'Greška pri inicijalnom učitavanju' }))
+          )
+        )
+      )
+    )
+  );
+  searchAuctions$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(AuctionActions.searchAuctions),
+      switchMap(action =>
+        this.auctionService.searchAuctions(action.keyword).pipe(
+          map(auctions => AuctionActions.searchAuctionsSuccess({ auctions })),
+          catchError(error => 
+            of(AuctionActions.searchAuctionsFailure({ error: error.message || 'Greška pri pretrazi' }))
+          )
         )
       )
     )

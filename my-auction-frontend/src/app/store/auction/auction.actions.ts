@@ -4,7 +4,6 @@ import { Bid } from '../../models/bid.model';
 import { UpdateAuctionDto, UpdateItemDto } from '../../models/dtos/update.dto';
 import { MyBidDto } from '../../models/dtos/my.bid.dto';
 
-
 export const loadAuctions = createAction('[Auction] Load Auctions');
 export const loadAuctionsSuccess = createAction(
   '[Auction] Load Auctions Success',
@@ -120,4 +119,39 @@ export const loadUserBidsSuccess = createAction(
 export const loadUserBidsFailure = createAction(
   '[Auction] Load User Bids Failure',
   props<{ error: any }>()
+);
+export const loadInitialAuctions = createAction(
+    '[Auction Explorer] Load Initial Auctions'
+);
+
+export const loadInitialAuctionsSuccess = createAction(
+    '[Auction API] Load Initial Auctions Success',
+    props<{ 
+        popular: Auction[], 
+        recent: Auction[], 
+        endingSoon: Auction[] 
+    }>()
+);
+
+export const loadInitialAuctionsFailure = createAction(
+    '[Auction API] Load Initial Auctions Failure',
+    props<{ error: any }>()
+);
+
+export const searchAuctions = createAction(
+    '[Auction Explorer] Search Auctions',
+    props<{ keyword: string }>()
+);
+
+export const searchAuctionsSuccess = createAction(
+    '[Auction API] Search Auctions Success',
+    props<{ auctions: Auction[] }>()
+);
+
+export const searchAuctionsFailure = createAction(
+    '[Auction API] Search Auctions Failure',
+    props<{ error: any }>()
+);
+export const clearSearch = createAction(
+    '[Auction Explorer] Clear Search Results'
 );

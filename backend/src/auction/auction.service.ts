@@ -14,6 +14,7 @@ import { Bid } from 'src/bid/bid.entity';
 import { AuctionGateway } from './auction.gateway';
 import { UpdateAuctionDto, UpdateItemDto } from 'src/dto/update.dto';
 import { Cron, CronExpression } from '@nestjs/schedule';
+import { ItemCategory } from 'src/enums/itemCategory.enum';
 
 @Injectable()
 export class AuctionService {
@@ -229,6 +230,38 @@ export class AuctionService {
       .emit('auctionExpired', { auction: updatedAuction });
 
     return updatedAuction;
+  }
+
+  async searchAuctions(keyword: string): Promise<Auction[]> {
+    const queryBuilder = this.auctionRepository.createQueryBuilder('auction');
+    queryBuilder.innerJoinAndSelect('auction.item', 'item');
+    queryBuilder.leftJoinAndSelect('auction.bidsList', 'bidsList');
+    queryBuilder.where('auction.status = :status', { status: true });
+
+    if (keyword) {
+      const normalizedKeyword = keyword.trim().toLowerCase();
+
+      const enumValues = Object.values(ItemCategory);
+      const matchedCategory = enumValues.find(
+        (val) => val.toLowerCase() === normalizedKeyword,
+      );
+
+      if (matchedCategory) {
+        queryBuilder.andWhere(
+          '(LOWER(item.naziv) LIKE :keyword OR item.kategorija = :category)',
+          {
+            keyword: `%${normalizedKeyword}%`,
+            category: matchedCategory,
+          },
+        );
+      } else {
+        queryBuilder.andWhere('LOWER(item.naziv) LIKE :keyword', {
+          keyword: `%${normalizedKeyword}%`,
+        });
+      }
+    }
+
+    return await queryBuilder.getMany();
   }
 
   @Cron(CronExpression.EVERY_30_SECONDS)

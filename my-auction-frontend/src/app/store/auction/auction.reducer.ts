@@ -81,7 +81,7 @@ export const auctionReducer = createReducer(
     on(AuctionActions.loadAuctionByIdSuccess, (state, { auction }) =>
     auctionAdapter.upsertOne(auction, {
       ...state,
-      selectedAuctionId: auction.id, // postavi selektovanu aukciju
+      selectedAuctionId: auction.id,
       loading: false,
       error: null
     })
@@ -91,5 +91,58 @@ export const auctionReducer = createReducer(
     ...state,
     loading: false,
     error,
+  })),
+  on(AuctionActions.loadInitialAuctions, (state) => ({
+    ...state,
+    initialLoading: true,
+    initialError: null,
+  })),
+
+  on(AuctionActions.loadInitialAuctionsSuccess, (state, action) => {
+    const allAuctions = [...action.popular, ...action.recent, ...action.endingSoon];
+    
+    const newState = auctionAdapter.addMany(allAuctions, state);
+
+    return {
+      ...newState,
+      popularAuctionIds: action.popular.map(a => a.id),
+      recentAuctionIds: action.recent.map(a => a.id),
+      endingSoonAuctionIds: action.endingSoon.map(a => a.id),
+      initialLoading: false,
+      initialError: null,
+    };
+  }),
+
+  on(AuctionActions.loadInitialAuctionsFailure, (state, { error }) => ({
+    ...state,
+    initialLoading: false,
+    initialError: 'Greška pri učitavanju: ' + error,
+    popularAuctionIds: [],
+    recentAuctionIds: [],
+    endingSoonAuctionIds: [],
+  })),
+  
+  on(AuctionActions.searchAuctions, (state) => ({
+    ...state,
+    searchLoading: true,
+    searchError: null,
+  })),
+
+  on(AuctionActions.searchAuctionsSuccess, (state, { auctions }) => {
+    const newState = auctionAdapter.upsertMany(auctions, state);
+
+    return {
+      ...newState,
+      searchAuctionIds: auctions.map(a => a.id),
+      searchLoading: false,
+      searchError: null,
+    };
+  }),
+
+  on(AuctionActions.clearSearch, (state) => ({
+      ...state,
+      searchAuctionIds: null,
+      searchLoading: false,
+      searchError: null,
   }))
 );
