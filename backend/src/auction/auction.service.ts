@@ -24,6 +24,8 @@ export class AuctionService {
     private readonly auctionRepository: Repository<Auction>,
     @InjectRepository(Bid)
     private readonly bidRepository: Repository<Bid>,
+    @InjectRepository(Item)
+    private itemRepository: Repository<Item>,
     private readonly auctionGateway: AuctionGateway,
   ) {}
 
@@ -50,13 +52,11 @@ export class AuctionService {
         startingPrice: dto.startingPrice,
         status: true,
         seller: seller,
-        startDate: new Date(dto.startDate),
+        startDate: new Date(),
         endDate: new Date(dto.endDate),
         item: newItem,
       });
       const savedAuction = await manager.save(Auction, newAuction);
-      newItem.auction = savedAuction;
-      await manager.save(Item, newItem);
 
       return savedAuction;
     });
@@ -194,25 +194,23 @@ export class AuctionService {
     return this.auctionRepository.save(auction);
   }
 
-  async deleteAuction(auctionId: number, userId: number): Promise<void> {
+  async deleteAuction(id: number): Promise<void> {
     const auction = await this.auctionRepository.findOne({
-      where: { id: auctionId },
-      relations: ['seller'],
+      where: { id },
+      relations: ['item', 'bidsList'],
     });
-
     if (!auction) {
-      throw new NotFoundException(`Ne postoji`);
-    }
-    if (auction.seller.id !== userId) {
-      throw new ForbiddenException('Možete obrisati samo sopstvene aukcije.');
+      throw new NotFoundException(`Auction with ID ${id} not found.`);
     }
 
-    const result = await this.auctionRepository.delete(auctionId);
+    if (auction.bidsList?.length) {
+      await this.bidRepository.delete({ auction: { id: auction.id } });
+    }
 
-    if (result.affected === 0) {
-      throw new NotFoundException(
-        `Aukcija ID ${auctionId} nije pronađena za brisanje.`,
-      );
+    await this.auctionRepository.delete(id);
+
+    if (auction.item) {
+      await this.itemRepository.delete(auction.item.itemID);
     }
   }
   async expireAuction(auctionId: number): Promise<Auction> {

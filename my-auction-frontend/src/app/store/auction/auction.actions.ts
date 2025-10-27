@@ -53,7 +53,6 @@ export const placeBid = createAction(
 
 export const placeBidSuccess = createAction(
   '[Auction API] Place Bid Success',
-  props<{ bid: Bid }>()
 );
 
 export const placeBidFailure = createAction(

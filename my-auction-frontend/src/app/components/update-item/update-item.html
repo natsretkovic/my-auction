@@ -1,12 +1,7 @@
 <div class="p-6 bg-white rounded-xl w-full max-w-md max-h-[80vh] overflow-y-auto">
-  <h2 class="text-2xl font-bold text-gray-800 mb-4">Dodaj novu aukciju</h2>
+  <h2 class="text-2xl font-bold text-gray-800 mb-4">Ažuriraj predmet</h2>
 
   <form [formGroup]="form" (ngSubmit)="submit()" class="space-y-4">
-
-    <div>
-      <label class="block font-medium text-gray-700 mb-1">Naziv predmeta</label>
-      <input formControlName="naziv" type="text" class="w-full p-2 border rounded-lg" />
-    </div>
 
     <div>
       <label class="block font-medium text-gray-700 mb-1">Opis</label>
@@ -30,18 +25,6 @@
     </div>
 
     <div>
-      <label class="block font-medium text-gray-700 mb-1">Početna cena</label>
-      <input formControlName="startingPrice" type="number" class="w-full p-2 border rounded-lg" />
-    </div>
-
-    
-
-    <div>
-      <label class="block font-medium text-gray-700 mb-1">Krajnji datum</label>
-      <input formControlName="endDate" type="datetime-local" class="w-full p-2 border rounded-lg" />
-    </div>
-
-    <div>
       <label class="block font-medium text-gray-700 mb-1">Slike (1-2)</label>
       <input type="file" (change)="onFileSelected($event)" multiple accept="image/*" class="w-full p-2 border rounded-lg" />
       <p *ngIf="fileError" class="text-red-600 mt-1">{{ fileError }}</p>
@@ -51,16 +34,13 @@
       </div>
     </div>
 
-    <div *ngIf="error$ | async as error" class="text-red-600 font-medium">{{ error }}</div>
-
     <div class="flex justify-end space-x-2 mt-4">
       <button type="button" (click)="close()" class="px-4 py-2 rounded-lg border text-gray-700 hover:bg-gray-100 transition">
         Otkaži
       </button>
-      <button type="submit" [disabled]="loading$ | async" class="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition">
-        {{ (loading$ | async) ? 'Dodavanje...' : 'Dodaj aukciju' }}
+      <button type="submit" class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition">
+        Sačuvaj promene
       </button>
     </div>
-
   </form>
 </div>

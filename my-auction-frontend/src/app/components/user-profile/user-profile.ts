@@ -12,6 +12,10 @@ import { AuctionCardComponent } from '../auction-card/auction-card';
 import { RouterModule } from '@angular/router';
 import * as AuctionActions from '../../store/auction/auction.actions';
 import * as AuctionSelectors from '../../store/auction/auction.selectors';
+import { UpdateItem } from '../update-item/update-item';
+import { ItemCategory } from '../../enums/itemCategory.enum';
+import { ItemStatus } from '../../enums/itemStatus.enum';
+
 
 @Component({
   selector: 'app-user-profile',
@@ -21,7 +25,7 @@ import * as AuctionSelectors from '../../store/auction/auction.selectors';
 })
 
 export class UserProfileComponent implements OnInit {
-  user$!: Observable<User | null>;
+  user$!: Observable<any | null>;
   userAuctions$!: Observable<Auction[]>;
   userAuctionsLoading$!: Observable<boolean>; 
 
@@ -47,5 +51,35 @@ export class UserProfileComponent implements OnInit {
   logOutUser() {
     this.store.dispatch(AuthActions.logout());
   }
+  handleEditAuction(auctionId: number): void {
+        //this.router.navigate(['/auction/edit', auctionId]);
+  }
+
+  handleDeleteAuction(auctionId: number): void {
+      if (confirm('Potvrda: Da li ste sigurni da želite obrisati ovu aukciju?')) {
+          this.store.dispatch(AuctionActions.deleteAuction({ auctionId: auctionId }));
+      }
+  }
+  openUpdateItemModal(auction: Auction) {
+  const dialogRef = this.dialog.open(UpdateItem, {
+    width: '500px',
+    data: {
+      categories: ItemCategory, 
+      statuses: ItemStatus,
+      initialData: auction.item
+    }
+  });
+
+  dialogRef.afterClosed().subscribe((result: any) => {
+    if (result) {
+      this.store.dispatch(
+        AuctionActions.updateAuction({
+          auctionId: auction.id,
+          data: result
+        })
+      );
+    }
+  });
+ }
 }
 

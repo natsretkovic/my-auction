@@ -3,11 +3,8 @@ import {
   PrimaryGeneratedColumn,
   Column,
   ManyToOne,
-  OneToOne,
-  JoinColumn,
 } from 'typeorm';
 import { User } from '../user/user.entity';
-import { Auction } from '../auction/auction.entity';
 import { ItemCategory } from 'src/enums/itemCategory.enum';
 import { ItemStatus } from 'src/enums/itemStatus.enum';
 
@@ -41,8 +38,4 @@ export class Item {
 
   @ManyToOne(() => User)
   vlasnik!: User;
-
-  @OneToOne(() => Auction, (auction) => auction.item)
-  @JoinColumn()
-  auction!: Auction;
 }

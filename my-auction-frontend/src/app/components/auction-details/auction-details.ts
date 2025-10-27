@@ -3,7 +3,7 @@ import { ActivatedRoute } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Observable, Subject, Subscription, timer, combineLatest, interval, takeWhile } from 'rxjs';
+import { Observable, combineLatest, interval, takeWhile } from 'rxjs';
 import { map, switchMap, startWith } from 'rxjs/operators';
 import { Auction } from '../../models/auction.model';
 import { User } from '../../models/user.model';
@@ -40,7 +40,7 @@ export class AuctionDetailsComponent implements OnInit {
   currentMainImage?: string;
   bidError: string | null = null;
 
-  private localBid$ = new Subject<number>();
+ private currentMainImageIsSet: boolean = false;
 
   constructor(
     private route: ActivatedRoute,
@@ -99,23 +99,21 @@ export class AuctionDetailsComponent implements OnInit {
 
     this.auction$ = combineLatest([
       storeAuction$,
-      this.localBid$.pipe(startWith(0)),
       this.remainingTime$
     ]).pipe(
-      map(([auction, localBid, remainingTime]) => {
+      map(([auction, remainingTime]) => {
         if (!auction) return null;
 
         if (auction.item) {
           this.isOwner = auction.item.vlasnik?.id === this.currentUser?.id;
-           if (auction.item.slike?.length) {
-             this.currentMainImage = auction.item.slike[0];
-           }
-          }
-
-         const currentPrice = Math.max(
-            auction.bidsList?.length ? Math.max(...auction.bidsList.map(b => b.ponuda)) : auction.startingPrice || 0,
-            localBid
-        );
+        }
+        if (auction.item.slike?.length && !this.currentMainImageIsSet) {
+            this.currentMainImage = auction.item.slike[0];
+            this.currentMainImageIsSet = true;
+          }
+         const currentPrice = auction.bidsList?.length 
+          ? Math.max(...auction.bidsList.map(b => b.ponuda)) 
+          : auction.startingPrice || 0;
 
 
         return {
@@ -151,7 +149,6 @@ export class AuctionDetailsComponent implements OnInit {
     this.submittingBid = true;
 
     this.store.dispatch(placeBid({ auctionId: auctionData.auction!.id, bidAmount: this.bidAmount }));
-    this.localBid$.next(this.bidAmount);
 
     this.submittingBid = false;
     this.bidAmount = 0;

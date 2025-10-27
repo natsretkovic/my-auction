@@ -31,7 +31,6 @@ export class AuctionController {
     const sellerId = parseInt(req.user.userId, 10);
     const savedAuction = await this.auctionService.addAuction(dto, sellerId);
     return {
-      message: 'Aukcija kreirana',
       auction: savedAuction,
     };
   }
@@ -94,12 +93,9 @@ export class AuctionController {
 
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  async deleteAuction(
-    @Param('id', ParseIntPipe) id: number,
-    @Req() req,
-  ): Promise<void> {
-    const userId = parseInt(req.user.userId, 10);
-    await this.auctionService.deleteAuction(id, userId);
+  async deleteAuction(@Param('id', ParseIntPipe) id: number): Promise<void> {
+    //const userId = parseInt(req.user.userId, 10);
+    await this.auctionService.deleteAuction(id);
   }
 
   @Patch(':id/expire')

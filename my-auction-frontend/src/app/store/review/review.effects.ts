@@ -41,12 +41,8 @@ export class ReviewEffects {
             ReviewActions.createReviewSuccess({ review: createdReview })
           ),
           catchError((error) => {
-            // 💡 DODATO: Ispisivanje greške u konzolu
             console.error('Greška pri kreiranju recenzije:', error); 
-            
-            // Greška iz API poziva je često duboko ugnježdena, koristite `error.error.message`
             const errorMessage = error.error?.message || error.message || 'Nepoznata greška servera';
-
             return of(
               ReviewActions.createReviewFailure({ error: errorMessage })
             );

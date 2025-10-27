@@ -42,7 +42,7 @@ export class AddAuctionModalComponent {
       kategorija: ['', Validators.required],
       stanje: ['', Validators.required],
       startingPrice: [0, [Validators.required, Validators.min(1)]],
-      startDate: ['', Validators.required],
+      //startDate: ['', Validators.required],
       endDate: ['', Validators.required]
     });
 

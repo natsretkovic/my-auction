@@ -5,6 +5,7 @@ import { Auction } from '../models/auction.model';
 import { User } from '../models/user.model';
 import { UpdateAuctionDto, UpdateItemDto } from '../models/dtos/update.dto';
 import { MyBidDto } from '../models/dtos/my.bid.dto';
+import { Bid } from '../models/bid.model';
 
 
 @Injectable({
@@ -27,8 +28,8 @@ export class AuctionService {
     return this.http.get<Auction>(`${this.baseUrl}/${auctionId}`);
   }
 
-  placeBid(auctionId: number, amount: number): Observable<any> {
-    return this.http.post(`${this.baseUrl}/bid`, {
+  placeBid(auctionId: number, amount: number): Observable<Bid> {
+    return this.http.post<Bid>(`${this.baseUrl}/bid`, {
       auctionId,
       amount
     });

@@ -16,5 +16,5 @@ export const routes: Routes = [
   { path: 'auction/:id', component: AuctionDetailsComponent},
   { path: 'show-auctions', component: ShowAuctionsComponent},
   {path: 'my-bids', component: UserBiddedAuctions},
-  {path: 'public-profile/:id', component: PublicProfile}
+  {path: 'public-profile/:id', component: PublicProfile},
 ];

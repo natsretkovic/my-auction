@@ -40,29 +40,28 @@ export const auctionReducer = createReducer(
     selectedAuctionId: auctionId,
   })),
 
-  on(AuctionActions.placeBidSuccess, (state, { bid }) => {
-    const selectedId = state.selectedAuctionId;
-    if (!selectedId) return state;
-
-    const selectedAuction = state.entities[selectedId];
-    if (!selectedAuction) return state;
-
-    return auctionAdapter.updateOne(
-      {
-        id: selectedId,
-        changes: { bidsList: [...selectedAuction.bidsList, bid] },
-      },
-      state
-    );
+  on(AuctionActions.placeBidSuccess, (state) => {
+    return {
+        ...state,
+        error: null
+    };
   }),
   on(AuctionActions.placeBidFailure, (state, { error }) => ({
     ...state,
     error,
   })),
 
-  on(AuctionActions.bidReceivedFromSocket, (state, { auction }) =>
-    auctionAdapter.upsertOne(auction, state)
-  ),
+  on(AuctionActions.bidReceivedFromSocket, (state, { auction }) =>{
+    const sortedBids = [...auction.bidsList];
+    sortedBids.sort((a, b) => b.ponuda - a.ponuda); 
+    const sortedAuction = { ...auction, bidsList: sortedBids };
+    return auctionAdapter.upsertOne(sortedAuction, {
+        ...state,
+        selectedAuctionId: auction.id,
+        loading: false,
+        error: null
+    });
+  }),
 
   on(AuctionActions.expireAuction, (state, { auctionId }) =>
     auctionAdapter.updateOne(
