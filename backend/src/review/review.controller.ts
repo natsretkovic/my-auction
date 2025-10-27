@@ -11,6 +11,7 @@ import {
   Request,
   ParseIntPipe,
   NotFoundException,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { ReviewService } from './review.service';
 import { CreateReviewDto } from '../dto/review.dto';
@@ -41,11 +42,28 @@ export class ReviewController {
     @Body() createReviewDto: CreateReviewDto,
     @Request() req,
   ) {
-    const buyer = req.user;
-    const seller = await this.userService.findUserById(sellerId);
-    if (!seller) {
-      throw new NotFoundException('Seller not found.');
+    console.log(' req.user:', req.user);
+
+    const dajeOcenuObj: any = req.user;
+
+    if (!dajeOcenuObj || !dajeOcenuObj.userId) {
+      console.error('req.user nedostaje userId.');
+      throw new UnauthorizedException('Korisnik nije prijavljen');
     }
-    return this.reviewService.createReview(buyer, seller, createReviewDto);
+
+    const dobijaOcenuObj = await this.userService.findUserById(sellerId);
+
+    if (!dobijaOcenuObj) {
+      throw new NotFoundException('Nema ko dobija ocenu');
+    }
+
+    const dajeOcenuId = { id: dajeOcenuObj.userId };
+    const dobijaOcenuId = { id: dobijaOcenuObj.id };
+
+    return this.reviewService.createReview(
+      dajeOcenuId,
+      dobijaOcenuId,
+      createReviewDto,
+    );
   }
 }

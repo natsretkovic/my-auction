@@ -152,4 +152,28 @@ export class AuctionEffects {
       )
     )
   );
+  loadUserAuctions$ = createEffect(() => 
+    this.actions$.pipe(
+      ofType(AuctionActions.loadUserAuctions),
+      
+      switchMap(() => 
+        this.auctionService.getMyAuctions().pipe(
+          
+          map(auctions => 
+            AuctionActions.loadUserAuctionsSuccess({ auctions })
+          ),
+          
+          catchError(error => 
+            of(AuctionActions.loadUserAuctionsFailure({ error: error.message || 'Greška pri učitavanju aukcija korisnika.' }))
+          )
+        )
+      )
+    )
+  );
+  reloadUserAuctionsOnAddSuccess$ = createEffect(() => 
+    this.actions$.pipe(
+      ofType(AuctionActions.addAuctionSuccess),
+      map(() => AuctionActions.loadUserAuctions()) 
+    )
+  );
 }

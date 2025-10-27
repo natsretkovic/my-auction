@@ -155,3 +155,16 @@ export const searchAuctionsFailure = createAction(
 export const clearSearch = createAction(
     '[Auction Explorer] Clear Search Results'
 );
+export const loadUserAuctions = createAction(
+  '[User Profile] Load User Auctions'
+);
+
+export const loadUserAuctionsSuccess = createAction(
+  '[User Profile] Load User Auctions Success',
+  props<{ auctions: Auction[] }>()
+);
+
+export const loadUserAuctionsFailure = createAction(
+  '[User Profile] Load User Auctions Failure',
+  props<{ error: any }>()
+);

@@ -78,3 +78,20 @@ export const selectSearchResults = createSelector(
 );
 
 export const selectShowInitialLists = createSelector(selectAuctionState, (state) => state.searchAuctionIds === null);
+export const selectUserAuctions = createSelector(
+    selectAuctionState,
+    selectAuctionEntities,
+    (state, entities) => {
+        if (!state.userAuctionIds) {
+            return [];
+        }
+        return state.userAuctionIds
+            .map(id => entities[id])
+            .filter((auction): auction is Auction => !!auction);
+    }
+);
+
+export const selectUserAuctionsLoading = createSelector(
+    selectAuctionState,
+    (state) => state.userAuctionsLoading
+);

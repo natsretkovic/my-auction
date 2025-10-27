@@ -1,45 +1,52 @@
-<div class="p-4 md:p-8 min-h-screen bg-gray-50">
-
+<div class="px-4 md:px-8 py-2 md:py-4 bg-gray-50">
   <div *ngIf="loading$ | async" class="flex justify-center items-center h-[50vh] text-gray-500">
     <div class="text-xl font-semibold animate-pulse">Učitavanje aukcije...</div>
   </div>
 
   <ng-container *ngIf="(loading$ | async) === false && (auction$ | async) as data">
-    <div class="max-w-6xl mx-auto bg-white shadow-2xl rounded-xl overflow-hidden border-t-8 border-indigo-600">
-
+    <div class="max-w-6xl mx-auto bg-white shadow-2xl rounded-xl overflow-hidden"> 
+      
       <div class="p-6 md:p-8 border-b border-gray-100">
-        <h1 class="text-3xl md:text-4xl font-extrabold text-gray-900 mb-2">{{ data.auction?.item?.naziv }}</h1>
+        <h1 class="text-3xl md:text-4xl font-extrabold text-gray-900 mb-2">
+          {{ data.auction?.item?.naziv }}
+          <span class="text-lg font-normal text-indigo-600 block sm:inline-block mt-1 sm:mt-0">
+            Kategorija: ({{ data.auction?.item?.kategorija }})
+          </span>
+        </h1>
         <p class="text-gray-600 leading-relaxed">{{ data.auction?.item?.opis }}</p>
-      </div>
 
+        <p class="text-sm text-gray-500 mt-4 pt-4 border-t border-gray-100">
+          Vlasnik: 
+          <a 
+            [routerLink]="['/public-profile', data.auction?.item?.vlasnik?.id]" 
+            class="font-semibold text-indigo-700 hover:text-indigo-900 transition-colors"
+          >
+            {{ data.auction?.item?.vlasnik?.username }}
+          </a>
+        </p>
+      </div>
       <div class="grid lg:grid-cols-3 gap-8 p-6 md:p-8">
 
         <div class="lg:col-span-2 space-y-6">
-          <h2 class="text-2xl font-bold text-gray-800 border-b pb-2">
-            {{ data.auction?.item?.naziv }} 
-              <span class="text-lg font-normal text-indigo-600"> kategorija: ({{ data.auction?.item?.kategorija }})</span>
-          </h2>
-          <p class="text-sm text-gray-600 mb-4">{{ data.auction?.item?.opis }}</p>
-
+          
           <div class="rounded-xl shadow-xl overflow-hidden border-4 border-gray-100 bg-gray-100 flex items-center justify-center">
-              <img [src]="currentMainImage || 'https://placehold.co/800x450/e5e7eb/6b7280?text=SLIKA+NEDOSTUPNA'" 
-                    alt="{{ data.auction?.item?.naziv }}" 
-                    class="max-w-full max-h-[450px] object-contain transition-transform duration-500"/>
+            <img [src]="currentMainImage || 'https://placehold.co/800x450/e5e7eb/6b7280?text=SLIKA+NEDOSTUPNA'" 
+                  alt="{{ data.auction?.item?.naziv }}" 
+                  class="max-w-full max-h-[450px] object-contain transition-transform duration-500"/>
           </div>
 
           <div class="flex flex-wrap gap-3 pt-2">
-              <ng-container *ngIf="data.auction?.item as item">
-                  <div *ngFor="let image of item.slike">
-                      <img [src]="image" 
-                            alt="Thumbnail" 
-                            (click)="selectImage(image)" 
-                            class="h-20 w-20 object-cover rounded-lg cursor-pointer border-2 transition duration-200"
-                            [ngClass]="{'border-indigo-600 shadow-md p-0.5': image === currentMainImage, 'border-transparent hover:border-indigo-400': image !== currentMainImage}"/>
-                  </div>
-              </ng-container>
+            <ng-container *ngIf="data.auction?.item as item">
+              <div *ngFor="let image of item.slike">
+                <img [src]="image" 
+                      alt="Thumbnail" 
+                      (click)="selectImage(image)" 
+                      class="h-20 w-20 object-cover rounded-lg cursor-pointer border-2 transition duration-200"
+                      [ngClass]="{'border-indigo-600 shadow-md p-0.5': image === currentMainImage, 'border-transparent hover:border-indigo-400': image !== currentMainImage}"/>
+              </div>
+            </ng-container>
           </div>
         </div>
-
         <div class="lg:col-span-1 space-y-6">
           
           <div class="bg-red-600 text-white p-6 rounded-xl shadow-xl transform hover:scale-[1.02] transition-transform duration-300">
@@ -58,22 +65,22 @@
           <div class="bg-white p-6 rounded-xl shadow-lg border border-gray-200">
             <h3 class="text-lg font-bold text-gray-800 mb-3 border-b pb-2">Poslednje ponude:</h3>
             <ul class="space-y-2 max-h-40 overflow-y-auto text-sm">
-                 <li *ngFor="let bid of data.auction?.bidsList; let i = index" 
-                      class="flex justify-between items-center p-2 rounded-lg transition"
-                      [ngClass]="{'bg-indigo-50 font-semibold': i === 0}">
-                    
-                    <a 
-                      [routerLink]="['/public-profile', bid.user.id]" 
-                      class="text-gray-700 hover:text-indigo-600 font-medium transition-colors"
-                      *ngIf="bid.user; else anonymous">
-                      {{ bid.user.username }}
-                    </a>
-                    <ng-template #anonymous>
-                      <span class="text-gray-400 italic">Anonimni korisnik</span>
-                    </ng-template>
+                   <li *ngFor="let bid of data.auction?.bidsList; let i = index" 
+                       class="flex justify-between items-center p-2 rounded-lg transition"
+                       [ngClass]="{'bg-indigo-50 font-semibold': i === 0}">
+                      
+                      <a 
+                        [routerLink]="['/public-profile', bid.user.id]" 
+                        class="text-gray-700 hover:text-indigo-600 font-medium transition-colors"
+                        *ngIf="bid.user; else anonymous">
+                        {{ bid.user.username }}
+                      </a>
+                      <ng-template #anonymous>
+                        <span class="text-gray-400 italic">Anonimni korisnik</span>
+                      </ng-template>
 
-                    <span class="font-bold text-indigo-700">{{ bid.ponuda }} dinara</span>
-                  </li>
+                      <span class="font-bold text-indigo-700">{{ bid.ponuda }} dinara</span>
+                    </li>
             </ul>
             <p *ngIf="!data.auction?.bidsList?.length" class="text-gray-500 text-center py-2">Nema ponuda.</p>
           </div>
@@ -85,48 +92,50 @@
 
             <div *ngIf="data.auction?.status; else expiredBlock">
 
-            <div *ngIf="!isOwner; else ownerBlock">
-              <label for="bid-input" class="block mb-3 text-lg font-semibold text-gray-700">
-                Postavite ponudu:
-              </label>
+              <div *ngIf="!isOwner; else ownerBlock">
+                <label for="bid-input" class="block mb-3 text-lg font-semibold text-gray-700">
+                  Postavite ponudu:
+                </label>
 
-              <div class="flex items-center gap-3">
-                <input 
-                  id="bid-input"
-                  type="number"
-                  [(ngModel)]="bidAmount"
-                  [min]="(data.currentPrice || 0) + 1"
-                  [placeholder]="'Min: ' + ((data.currentPrice || 0) + 1)"
-                  class="flex-grow border border-gray-300 p-3 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 transition shadow-sm"
-                  [disabled]="submittingBid"
-                >
+                <div class="flex items-center gap-3">
+                  <input 
+                    id="bid-input"
+                    type="number"
+                    [(ngModel)]="bidAmount"
+                    [min]="(data.currentPrice || 0) + 1"
+                    [placeholder]="'Min: ' + ((data.currentPrice || 0) + 1)"
+                    class="flex-grow border border-gray-300 p-3 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 transition shadow-sm"
+                    [disabled]="submittingBid"
+                  >
 
-                <button 
-                  (click)="placeBid(data)"
-                  [disabled]="submittingBid"
-                  class="bg-indigo-500 text-white px-6 py-3 rounded-lg font-semibold hover:bg-indigo-600 transition shadow-md disabled:bg-gray-400 disabled:cursor-not-allowed flex-shrink-0"
-                >
-                  <span *ngIf="!submittingBid">Licitiraj</span>
-                  <span *ngIf="submittingBid">Šaljem...</span>
-                </button>
+                  <button 
+                    (click)="placeBid(data)"
+                    [disabled]="submittingBid"
+                    class="bg-indigo-500 text-white px-6 py-3 rounded-lg font-semibold hover:bg-indigo-600 transition shadow-md disabled:bg-gray-400 disabled:cursor-not-allowed flex-shrink-0"
+                  >
+                    <span *ngIf="!submittingBid">Licitiraj</span>
+                    <span *ngIf="submittingBid">Šaljem...</span>
+                  </button>
+                </div>
               </div>
+
+              <ng-template #ownerBlock>
+                <div class="text-center bg-yellow-50 p-4 rounded-lg border border-yellow-200">
+                  <p class="font-semibold text-yellow-700">Vi ste vlasnik ove aukcije.</p>
+                  <p class="text-sm text-yellow-600 mt-1">Ne možete licitirati na vaš predmet.</p>
+                </div>
+              </ng-template>
             </div>
 
-            <ng-template #ownerBlock>
-              <div class="text-center bg-yellow-50 p-4 rounded-lg border border-yellow-200">
-                <p class="font-semibold text-yellow-700">Vi ste vlasnik ove aukcije.</p>
-                <p class="text-sm text-yellow-600 mt-1">Ne možete licitirati na vaš predmet.</p>
+            <ng-template #expiredBlock>
+              <div class="text-center bg-gray-100 p-5 rounded-lg border border-gray-300">
+                <p class="font-semibold text-gray-700 text-lg"> Aukcija je istekla</p>
+                <p class="text-sm text-gray-500 mt-1">Više nije moguće postavljati ponude.</p>
               </div>
             </ng-template>
           </div>
-
-          <ng-template #expiredBlock>
-            <div class="text-center bg-gray-100 p-5 rounded-lg border border-gray-300">
-              <p class="font-semibold text-gray-700 text-lg"> Aukcija je istekla</p>
-              <p class="text-sm text-gray-500 mt-1">Više nije moguće postavljati ponude.</p>
-            </div>
-          </ng-template>
         </div>
       </div>
     </div>
+  </ng-container>
 </div>

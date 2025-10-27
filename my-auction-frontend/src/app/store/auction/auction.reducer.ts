@@ -144,5 +144,37 @@ export const auctionReducer = createReducer(
       searchAuctionIds: null,
       searchLoading: false,
       searchError: null,
-  }))
+  })),
+  on(AuctionActions.loadUserAuctions, (state) => ({
+    ...state,
+    userAuctionsLoading: true,
+    userAuctionsError: null,
+  })),
+
+  on(AuctionActions.loadUserAuctionsSuccess, (state, { auctions }) => {
+    const newState = auctionAdapter.upsertMany(auctions, state); 
+    return {
+      ...newState,
+      userAuctionIds: auctions.map(a => a.id),
+      userAuctionsLoading: false,
+      userAuctionsError: null,
+    };
+  }),
+
+  on(AuctionActions.loadUserAuctionsFailure, (state, { error }) => ({
+    ...state,
+    userAuctionsLoading: false,
+    userAuctionsError: error.message || 'Neuspelo učitavanje aukcija korisnika.',
+  })),
+  
+  on(AuctionActions.addAuctionSuccess, (state, { auction }) => {
+    const newState = auctionAdapter.addOne(auction, state);
+    const newUserAuctionIds = [auction.id, ...(state.userAuctionIds || [])];
+    
+    return {
+      ...newState,
+      userAuctionIds: newUserAuctionIds,
+      userAuctionsError: null, 
+    };
+  }),
 );

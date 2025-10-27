@@ -17,6 +17,10 @@ export interface AuctionEntityState extends EntityState<Auction> {
   searchAuctionIds: number[] | null;
   searchLoading: boolean;
   searchError: string | null;
+
+  userAuctionIds: number[] | null;
+  userAuctionsLoading: boolean;
+  userAuctionsError: string | null;
 }
 
 export const auctionAdapter = createEntityAdapter<Auction>({
@@ -36,4 +40,7 @@ export const initialState: AuctionEntityState = auctionAdapter.getInitialState({
   searchAuctionIds: null,
   searchLoading: false,
   searchError: null,
+  userAuctionIds: null,
+  userAuctionsLoading: false,
+  userAuctionsError: null
 });

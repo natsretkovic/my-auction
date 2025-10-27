@@ -41,7 +41,6 @@ export class AuctionDetailsComponent implements OnInit {
   bidError: string | null = null;
 
   private localBid$ = new Subject<number>();
-  private subscription = new Subscription();
 
   constructor(
     private route: ActivatedRoute,
@@ -78,7 +77,6 @@ export class AuctionDetailsComponent implements OnInit {
             const diffInMs = auctionEndTime.diff(now);
             
             if (diffInMs <= 0) {
-              this.store.dispatch({type: '[Auction] Expire Auction', auctionId: auctionId});
               return '00:00:00'
             };
             
