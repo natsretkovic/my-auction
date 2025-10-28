@@ -293,7 +293,17 @@ export class AuctionService {
       order: { id: 'DESC' },
     });
 
-    return bids.map((bid) => {
+    const highestBidsPerAuction = bids.reduce(
+      (acc, bid) => {
+        if (!acc.find((b) => b.auction.id === bid.auction.id)) {
+          acc.push(bid);
+        }
+        return acc;
+      },
+      [] as typeof bids,
+    );
+
+    return highestBidsPerAuction.map((bid) => {
       const auction = bid.auction;
       const highestBid = Math.max(...auction.bidsList.map((b) => b.ponuda));
 

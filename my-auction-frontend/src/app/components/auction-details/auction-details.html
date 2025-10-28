@@ -99,19 +99,18 @@
 
                 <div class="flex items-center gap-3">
                   <input 
-                    id="bid-input"
-                    type="number"
-                    [(ngModel)]="bidAmount"
-                    [min]="(data.currentPrice || 0) + 1"
-                    [placeholder]="'Min: ' + ((data.currentPrice || 0) + 1)"
-                    class="flex-grow border border-gray-300 p-3 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 transition shadow-sm"
-                    [disabled]="submittingBid"
+                  id="bid-input"
+                  type="number"
+                  [(ngModel)]="bidAmount"
+                  [min]="(data.currentPrice || 0) + 1"
+                  [placeholder]="'Min: ' + ((data.currentPrice || 0) + 1)"
+                  class="flex-grow border border-gray-300 p-3 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 transition shadow-sm"
+                  [disabled]="submittingBid || auctionEnded"
                   >
-
-                  <button 
-                    (click)="placeBid(data)"
-                    [disabled]="submittingBid"
-                    class="bg-indigo-500 text-white px-6 py-3 rounded-lg font-semibold hover:bg-indigo-600 transition shadow-md disabled:bg-gray-400 disabled:cursor-not-allowed flex-shrink-0"
+                 <button 
+                  (click)="placeBid(data)"
+                  [disabled]="submittingBid || auctionEnded"
+                  class="bg-indigo-500 text-white px-6 py-3 rounded-lg font-semibold hover:bg-indigo-600 transition shadow-md disabled:bg-gray-400 disabled:cursor-not-allowed flex-shrink-0"
                   >
                     <span *ngIf="!submittingBid">Licitiraj</span>
                     <span *ngIf="submittingBid">Šaljem...</span>

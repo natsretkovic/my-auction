@@ -39,6 +39,7 @@ export class AuctionDetailsComponent implements OnInit {
   submittingBid = false;
   currentMainImage?: string;
   bidError: string | null = null;
+  auctionEnded: boolean = false;
 
  private currentMainImageIsSet: boolean = false;
 
@@ -52,7 +53,7 @@ export class AuctionDetailsComponent implements OnInit {
       this.currentUser = user;
     });
 
-  const auctionId = Number(this.route.snapshot.paramMap.get('id'));
+    const auctionId = Number(this.route.snapshot.paramMap.get('id'));
 
     this.store.dispatch(loadAuctionById({ id: auctionId }));
     this.store.dispatch(selectAuction({ auctionId }));
@@ -77,6 +78,7 @@ export class AuctionDetailsComponent implements OnInit {
             const diffInMs = auctionEndTime.diff(now);
             
             if (diffInMs <= 0) {
+              this.auctionEnded=false;
               return '00:00:00'
             };
             
@@ -135,6 +137,12 @@ export class AuctionDetailsComponent implements OnInit {
   placeBid(auctionData: CombinedAuctionData): void {
     this.bidError = null;
     const currentPrice = auctionData.currentPrice;
+    const now = dayjs();
+
+   if (now.isAfter(auctionData.auction?.endDate)) {
+      this.bidError = 'Aukcija je završena';
+      return;
+    }
 
     if (!this.bidAmount || this.bidAmount <= currentPrice) {
       this.bidError = `Ponuda mora biti veća od trenutne cene (${currentPrice})!`;

@@ -5,12 +5,13 @@ import * as AuctionActions from '../../store/auction/auction.actions';
 import { selectUserBids } from '../../store/auction/auction.selectors';
 import { MyBidDto } from '../../models/dtos/my.bid.dto';
 import { CommonModule } from '@angular/common';
+import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-user-bidded-auctions',
   templateUrl: './user-bidded-auctions.html',
   styleUrls: ['./user-bidded-auctions.css'],
-  imports: [CommonModule]
+  imports: [CommonModule, RouterModule]
 })
 export class UserBiddedAuctions implements OnInit {
   userBids$!: Observable<MyBidDto[]>;

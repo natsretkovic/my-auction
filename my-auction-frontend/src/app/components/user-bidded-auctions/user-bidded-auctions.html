@@ -1,4 +1,4 @@
-<div *ngFor="let bid of userBids$ | async" class="mb-4 p-4 border rounded-lg shadow-sm">
+<div *ngFor="let bid of userBids$ | async" class="mb-4 p-4 border rounded-lg shadow-sm" [routerLink]="['/auction', bid.auctionId]">
   <h3 class="text-lg font-semibold text-gray-800">{{ bid.item.naziv }}</h3>
 
   <p class="text-gray-600">
