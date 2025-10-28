@@ -96,7 +96,7 @@ export const deleteAuctionFailure = createAction(
   '[Auction API] Delete Auction Failure',
   props<{ error: any }>()
 );
-export const expireAuction = createAction(
+/*export const expireAuction = createAction(
   '[Auction] Expire Auction',
   props<{ auctionId: number }>()
 );
@@ -109,7 +109,7 @@ export const expireAuctionSuccess = createAction(
 export const expireAuctionFailure = createAction(
   '[Auction] Expire Auction Failure',
   props<{ error: any }>()
-);
+);*/
 export const loadUserBids = createAction('[Auction] Load User Bids');
 export const loadUserBidsSuccess = createAction(
   '[Auction] Load User Bids Success',

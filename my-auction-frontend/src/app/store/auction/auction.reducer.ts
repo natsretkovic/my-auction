@@ -63,7 +63,7 @@ export const auctionReducer = createReducer(
     });
   }),
 
-  on(AuctionActions.expireAuction, (state, { auctionId }) =>
+  /*on(AuctionActions.expireAuction, (state, { auctionId }) =>
     auctionAdapter.updateOne(
       {
         id: auctionId,
@@ -71,7 +71,7 @@ export const auctionReducer = createReducer(
       },
       state
     )
-  ),
+  ),*/
 
   on(AuctionActions.loadUserBidsSuccess, (state, { userBids }) => ({
     ...state,

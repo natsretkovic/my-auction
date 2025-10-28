@@ -290,6 +290,7 @@ export class AuctionService {
         'auction.bidsList',
         'auction.seller',
       ],
+      order: { id: 'DESC' },
     });
 
     return bids.map((bid) => {

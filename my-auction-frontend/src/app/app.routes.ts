@@ -1,7 +1,7 @@
 import { Routes } from '@angular/router';
-import { WelcomeComponent } from './components/welcomeComponent/welcome.component';
-import { LoginComponent } from './components/loginComponent/login.component';
-import { RegisterComponent } from './components/registerComponent/register.component';
+import { WelcomeComponent } from './components/welcome/welcome.component';
+import { LoginComponent } from './components/login/login.component';
+import { RegisterComponent } from './components/register/register.component';
 import { UserProfileComponent } from './components/user-profile/user-profile';
 import { AuctionDetailsComponent } from './components/auction-details/auction-details';
 import { ShowAuctionsComponent } from './components/show-auctions/show-auctions';

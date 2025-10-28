@@ -94,7 +94,7 @@ export class AuctionEffects {
       )
     )
   );
-  expireAuction$ = createEffect(() =>
+  /*expireAuction$ = createEffect(() =>
   this.actions$.pipe(
     ofType(AuctionActions.expireAuction),
     switchMap(({ auctionId }) =>
@@ -104,7 +104,7 @@ export class AuctionEffects {
         )
       )
     )
-  );
+  );*/
   loadUserBids$ = createEffect(() =>
     this.actions$.pipe(
       ofType(AuctionActions.loadUserBids),
