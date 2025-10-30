@@ -22,6 +22,16 @@ export class RegisterComponent {
   constructor(private auth: AuthService, private router: Router) {}
 
   register() {
+    if (!this.ime.trim() || !this.prezime.trim() || !this.brojTelefona.trim() ||
+      !this.email.trim() || !this.username.trim() || !this.password.trim()) {
+          this.error = 'Sva polja su obavezna.';
+          return;
+    }
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(this.email)) {
+      this.error = 'Unesite validnu e-mail adresu.';
+      return;
+    }
     const user = {
       ime: this.ime,
       prezime: this.prezime,

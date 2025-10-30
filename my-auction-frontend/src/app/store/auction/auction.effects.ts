@@ -41,11 +41,11 @@ export class AuctionEffects {
   );
 
   placeBid$ = createEffect(() =>
-    this.actions$.pipe(
-      ofType(AuctionActions.placeBid),
-      mergeMap(({ auctionId, bidAmount }) =>
-        this.auctionService.placeBid(auctionId, bidAmount).pipe(
-          map(() => AuctionActions.placeBidSuccess()), 
+      this.actions$.pipe(
+      ofType(AuctionActions.placeBid),
+      mergeMap(({ auctionId, bidAmount }) =>
+       this.auctionService.placeBid(auctionId, bidAmount).pipe(
+         map(() => AuctionActions.placeBidSuccess()), 
           catchError(error =>
             of(AuctionActions.placeBidFailure({ error: error.message }))
           )
@@ -67,7 +67,6 @@ export class AuctionEffects {
         ),
         { dispatch: false }
     );
-
   updateAuction$ = createEffect(() =>
     this.actions$.pipe(
       ofType(AuctionActions.updateAuction),
@@ -172,7 +171,7 @@ export class AuctionEffects {
   );
   reloadUserAuctionsOnAddSuccess$ = createEffect(() => 
     this.actions$.pipe(
-      ofType(AuctionActions.addAuctionSuccess, AuctionActions.deleteAuctionSuccess),
+      ofType(AuctionActions.addAuctionSuccess, AuctionActions.deleteAuctionSuccess,AuctionActions.updateAuctionSuccess),
       map(() => AuctionActions.loadUserAuctions()) 
     )
   );

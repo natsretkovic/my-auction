@@ -1,0 +1,62 @@
+<div class="p-6 bg-white rounded-xl shadow-lg w-full max-w-md">
+  <h2 class="text-2xl font-semibold mb-4">Izmeni aukciju</h2>
+
+  <form [formGroup]="form" (ngSubmit)="submit()" class="space-y-4">
+    
+    <div>
+      <label class="block text-sm font-medium mb-1">Naziv</label>
+      <input
+        formControlName="naziv"
+        type="text"
+        placeholder="Unesite naziv"
+        class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
+      />
+      <p *ngIf="form.get('naziv')?.invalid && form.get('naziv')?.touched" class="text-red-500 text-sm">
+        Naziv je obavezan
+      </p>
+    </div>
+
+    <div>
+      <label class="block text-sm font-medium mb-1">Opis</label>
+      <textarea
+        formControlName="opis"
+        rows="3"
+        placeholder="Unesite opis"
+        class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
+      ></textarea>
+      <p *ngIf="form.get('opis')?.invalid && form.get('opis')?.touched" class="text-red-500 text-sm">
+        Opis je obavezan
+      </p>
+    </div>
+
+    <div>
+      <label class="block text-sm font-medium mb-1">Kategorija</label>
+      <select formControlName="kategorija" class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400">
+        <option *ngFor="let cat of categories" [value]="cat">{{cat}}</option>
+      </select>
+    </div>
+
+    <div>
+      <label class="block text-sm font-medium mb-1">Stanje</label>
+      <select formControlName="stanje" class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400">
+        <option *ngFor="let st of statuses" [value]="st">{{st}}</option>
+      </select>
+    </div>
+
+    <div>
+      <label class="block text-sm font-medium mb-1">Slike (1-2)</label>
+      <input type="file" (change)="onFileSelected($event)" multiple accept="image/*" class="block w-full text-sm text-gray-600"/>
+      <p *ngIf="fileError" class="text-red-500 text-sm mt-1">{{ fileError }}</p>
+
+      <div class="flex mt-2 space-x-2">
+        <img *ngFor="let img of previewImages" [src]="img" class="w-20 h-20 object-cover rounded-md border"/>
+      </div>
+    </div>
+
+    <div class="flex justify-end space-x-3 mt-4">
+      <button type="button" (click)="close()" class="px-4 py-2 bg-gray-200 rounded-md hover:bg-gray-300">Odustani</button>
+      <button type="submit" class="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600">Sačuvaj izmene</button>
+    </div>
+
+  </form>
+</div>

@@ -22,6 +22,7 @@ export class AddAuctionModalComponent {
   form: FormGroup;
   categories = Object.values(ItemCategory);
   statuses = Object.values(ItemStatus);
+  minDate: string = '';
 
   loading$!: Observable<boolean>;
   error$!: Observable<string | null>;
@@ -36,6 +37,8 @@ export class AddAuctionModalComponent {
     private store: Store<AuctionEntityState>,
     private supabaseService: SupabaseService
   ) {
+    const now = new Date();
+    this.minDate = now.toISOString().slice(0, 16);
     this.form = this.fb.group({
       naziv: ['', Validators.required],
       opis: ['', Validators.required],
@@ -57,16 +60,16 @@ export class AddAuctionModalComponent {
     const newFiles = Array.from(input.files);
     const combinedFiles = [...this.selectedFiles, ...newFiles];
 
-if (combinedFiles.length < 1 || combinedFiles.length > 2) {
-    this.fileError = 'Minimalan broj slika je 1 a maksimalan 2!';
-    return;
+    if (combinedFiles.length < 1 || combinedFiles.length > 2) {
+        this.fileError = 'Minimalan broj slika je 1 a maksimalan 2!';
+        return;
+      }
+
+    this.selectedFiles = combinedFiles;
+    this.fileError = null;
+
+    this.previewImages = this.selectedFiles.map(file => URL.createObjectURL(file));
   }
-
-  this.selectedFiles = combinedFiles;
-  this.fileError = null;
-
-  this.previewImages = this.selectedFiles.map(file => URL.createObjectURL(file));
-}
 
   async submit() {
     if (this.form.invalid || this.fileError) return;

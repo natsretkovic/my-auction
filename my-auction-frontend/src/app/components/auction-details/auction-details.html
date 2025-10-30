@@ -10,8 +10,9 @@
         <h1 class="text-3xl md:text-4xl font-extrabold text-gray-900 mb-2">
           {{ data.auction?.item?.naziv }}
           <span class="text-lg font-normal text-indigo-600 block sm:inline-block mt-1 sm:mt-0">
-            Kategorija: ({{ data.auction?.item?.kategorija }})
+            Kategorija i stanje: {{ data.auction?.item?.kategorija}}, {{ data.auction?.item?.stanje }}
           </span>
+        <br>
         </h1>
         <p class="text-gray-600 leading-relaxed">{{ data.auction?.item?.opis }}</p>
 

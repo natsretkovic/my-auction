@@ -74,7 +74,7 @@ export class AuctionService {
   ): Promise<Bid> {
     const auction = await this.auctionRepository.findOne({
       where: { id: auctionId },
-      relations: ['item', 'item.vlasnik'],
+      relations: ['item', 'item.vlasnik', 'bidsList'],
     });
 
     if (!auction) {
@@ -85,6 +85,16 @@ export class AuctionService {
     if (isOwner) {
       throw new ForbiddenException(
         'Ne možete licitirati na sopstvenu aukciju.',
+      );
+    }
+    const highestBid =
+      auction.bidsList && auction.bidsList.length > 0
+        ? Math.max(...auction.bidsList.map((b) => b.ponuda))
+        : auction.startingPrice ?? 0;
+
+    if (amount <= highestBid) {
+      throw new BadRequestException(
+        `Ponuda mora biti veća od trenutne cene (${highestBid}).`,
       );
     }
 
@@ -160,33 +170,18 @@ export class AuctionService {
       throw new NotFoundException(`Aukcija ID ${auctionId} nije pronađena.`);
     }
 
-    if (auction.seller.id !== userId) {
+    if (auction.seller.id !== Number(userId)) {
       throw new ForbiddenException('Možete menjati samo sopstvene aukcije.');
     }
 
-    if (updateData.endDate) {
-      const newEndDate = new Date(updateData.endDate);
-
-      if (isNaN(newEndDate.getTime())) {
-        throw new BadRequestException('Neispravan format datuma za endDate.');
-      }
-
-      if (newEndDate.getTime() <= auction.endDate.getTime()) {
-        throw new ForbiddenException(
-          'Nije moguće skratiti trajanje aukcije, samo ga produžiti.',
-        );
-      }
-      auction.endDate = newEndDate;
-    }
-
-    if (updateData.itemUpdate && auction.item) {
+    if (auction.item) {
       const item: Item = auction.item;
-      const itemUpdate: UpdateItemDto = updateData.itemUpdate;
 
-      if (itemUpdate.opis) item.opis = itemUpdate.opis;
-      if (itemUpdate.kategorija) item.kategorija = itemUpdate.kategorija;
-      if (itemUpdate.stanje) item.stanje = itemUpdate.stanje;
-      if (itemUpdate.slike) item.slike = itemUpdate.slike;
+      if(updateData.naziv) item.naziv=updateData.naziv;
+      if (updateData.opis) item.opis = updateData.opis;
+      if (updateData.kategorija) item.kategorija = updateData.kategorija;
+      if (updateData.stanje) item.stanje = updateData.stanje;
+      if (updateData.slike) item.slike = updateData.slike;
 
       await this.dataSource.manager.save(Item, item);
     }
@@ -238,7 +233,6 @@ export class AuctionService {
 
     if (keyword) {
       const normalizedKeyword = keyword.trim().toLowerCase();
-
       const enumValues = Object.values(ItemCategory);
       const matchedCategory = enumValues.find(
         (val) => val.toLowerCase() === normalizedKeyword,

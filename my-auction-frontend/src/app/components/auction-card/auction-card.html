@@ -9,7 +9,7 @@
   
   <div *ngIf="isOwner()" class="flex justify-end -mt-2 -mr-2 mb-2">
       <button 
-        (mousedown)="$event.stopPropagation(); onEditClick()" 
+        (click)="$event.stopPropagation(); onEditClick()" 
         class="bg-white hover:bg-gray-100 text-black border border-gray-400 font-bold p-1 rounded-full w-6 h-6 flex items-center justify-center text-xs shadow-md transition mx-1" 
         title="Uredi"
       >
@@ -17,7 +17,7 @@
       </button>
       
       <button 
-        (mousedown)="$event.stopPropagation(); onDeleteClick()" 
+        (click)="$event.stopPropagation(); onDeleteClick()" 
         class="bg-white hover:bg-gray-100 text-black border border-gray-400 font-bold p-1 rounded-full w-6 h-6 flex items-center justify-center text-xs shadow-md transition" 
         title="Obrisi"
       >

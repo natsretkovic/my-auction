@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { UpdateItem } from './update-item';
+import { EditAuctionModal } from './edit-auction-modal';
 
-describe('UpdateItem', () => {
-  let component: UpdateItem;
-  let fixture: ComponentFixture<UpdateItem>;
+describe('EditAuctionModal', () => {
+  let component: EditAuctionModal;
+  let fixture: ComponentFixture<EditAuctionModal>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [UpdateItem]
+      imports: [EditAuctionModal]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(UpdateItem);
+    fixture = TestBed.createComponent(EditAuctionModal);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

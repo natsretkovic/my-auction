@@ -15,6 +15,7 @@ export class ReviewEffects {
       mergeMap(({ sellerId }) =>
         this.reviewService.getReviewsForSeller(sellerId).pipe(
           map(reviews => ReviewActions.loadReviewsSuccess({ reviews })),
+          
           catchError(error => of(ReviewActions.loadReviewsFailure({ error: error.message })))
         )
       )
@@ -33,22 +34,22 @@ export class ReviewEffects {
     )
   );
   createReview$ = createEffect(() =>
-    this.actions$.pipe(
-      ofType(ReviewActions.createReview),
-      mergeMap(({ sellerId, review }) =>
-        this.reviewService.createReview(sellerId, review).pipe(
-          map((createdReview) =>
-            ReviewActions.createReviewSuccess({ review: createdReview })
-          ),
-          catchError((error) => {
-            console.error('Greška pri kreiranju recenzije:', error); 
-            const errorMessage = error.error?.message || error.message || 'Nepoznata greška servera';
-            return of(
-              ReviewActions.createReviewFailure({ error: errorMessage })
-            );
-          })
-        )
-      )
-    )
+    this.actions$.pipe(
+      ofType(ReviewActions.createReview),
+      mergeMap(({ sellerId, review }) =>
+        this.reviewService.createReview(sellerId, review).pipe(
+        map((createdReview) =>
+        ReviewActions.createReviewSuccess({ review: createdReview })
+        ),
+        catchError((error) => {
+          console.error('Greška pri kreiranju recenzije:', error); 
+            const errorMessage = error.error?.message || error.message || 'Nepoznata greška servera';
+            return of(
+            ReviewActions.createReviewFailure({ error: errorMessage })
+            );
+          })
+        )
+      )
+    )
   );
 }

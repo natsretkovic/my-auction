@@ -1,121 +1,125 @@
-<div class="search-container mb-10">
-  <form (ngSubmit)="onSearchSubmit()" #searchForm="ngForm" class="flex items-center space-x-2">
-    <div class="relative flex-grow">
-      <input
-        type="text"
-        [(ngModel)]="searchTerm"
-        name="searchTerm"
-        placeholder="Pretraži predmete..."
-        class="search-input w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-150 ease-in-out shadow-sm pr-12"
-      />
-      <button
-        *ngIf="searchTerm"
-        (click)="searchTerm = ''"
-        type="button"
-        class="absolute right-12 top-1/2 transform -translate-y-1/2 p-1 text-gray-400 hover:text-gray-600 transition duration-150 ease-in-out"
-        aria-label="Obriši tekst"
-      >
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-          <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
-        </svg>
-      </button>
-    </div>
+<div class="flex h-screen bg-gray-100">
 
-    <button
-      type="submit"
-      class="search-button bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg shadow-md transition duration-150 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-    >
-      Traži
-    </button>
-  </form>
+    <app-sider-bar class="flex h-full"></app-sider-bar> 
 
-  <button
-    *ngIf="(searchResults$ | async) !== null"
-    (click)="searchTerm = ''; onSearchSubmit()"
-    class="reset-button mt-4 w-full sm:w-auto bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium py-2 px-4 rounded-lg shadow-sm transition duration-150 ease-in-out border border-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-300 focus:ring-offset-2"
-  >
-    Poništi pretragu
-  </button>
-</div>
+    <main class="flex-1 p-4 md:p-8 overflow-y-auto">
+        
+        <div class="search-container mb-10">
+            <form (ngSubmit)="onSearchSubmit()" #searchForm="ngForm" class="flex items-center space-x-2">
+                <div class="relative flex-grow">
+                  <input
+                    type="text"
+                    [(ngModel)]="searchTerm"
+                    name="searchTerm"
+                    placeholder="Pretraži predmete..."
+                    class="search-input w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-150 ease-in-out shadow-sm pr-12"
+                  />
+                  <button
+                    *ngIf="searchTerm"
+                    (click)="searchTerm = ''"
+                    type="button"
+                    class="absolute right-3 top-1/2 transform -translate-y-1/2 p-1 text-gray-400 hover:text-gray-600 transition duration-150 ease-in-out"
+                    aria-label="Obriši tekst"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                      <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
+                    </svg>
+                  </button>
+                </div>
 
-<ng-container *ngIf="!(showInitialLists$ | async)">
-  </ng-container>
+                <button
+                  type="submit"
+                  class="search-button bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg shadow-md transition duration-150 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                >
+                  Traži
+                </button>
+            </form>
 
-<div *ngIf="showInitialLists$ | async">
-  </div>
-<ng-container *ngIf="!(showInitialLists$ | async)">
-  <div *ngIf="(searchLoading$ | async)" class="text-center py-8">
-    Pretraga u toku...
-  </div>
-  <div *ngIf="(searchError$ | async) as err" class="text-center text-red-500 py-8">
-    {{ err }}
-  </div>
+            <button
+                *ngIf="(searchResults$ | async) !== null"
+                (click)="searchTerm = ''; onResetSearch()"
+                class="reset-button mt-4 w-full sm:w-auto bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium py-2 px-4 rounded-lg shadow-sm transition duration-150 ease-in-out border border-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-300 focus:ring-offset-2"
+            >
+                Poništi pretragu
+            </button>
+        </div>
 
-  <ng-container
-    *ngIf="
-      !(searchLoading$ | async) &&
-      !(searchError$ | async) &&
-      (searchResults$ | async) as results
-    "
-  >
-    <h2 class="text-xl font-bold mb-4">
-      Rezultati pretrage: {{ results.length }}
-    </h2>
+        <ng-container *ngIf="!(showInitialLists$ | async)">
+            <div *ngIf="(searchLoading$ | async)" class="text-center py-8">
+                Pretraga u toku...
+            </div>
+            <div *ngIf="(searchError$ | async) as err" class="text-center text-red-500 py-8">
+                {{ err }}
+            </div>
 
-    <div *ngIf="results.length === 0" class="text-center py-8 text-gray-500">
-      Nema pronađenih aukcija za '{{ searchTerm }}'.
-    </div>
+            <ng-container
+                *ngIf="
+                  !(searchLoading$ | async) &&
+                  !(searchError$ | async) &&
+                  (searchResults$ | async) as results
+                "
+            >
+                <h2 class="text-xl font-bold mb-4">
+                  Rezultati pretrage: {{ results.length }}
+                </h2>
 
-    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 mb-8">
-      <app-auction-card
-        *ngFor="let auction of results"
-        [auction]="auction"
-        (clicked)="openAuction(auction.id)"
-      >
-      </app-auction-card>
-    </div>
-  </ng-container>
-</ng-container>
+                <div *ngIf="results.length === 0" class="text-center py-8 text-gray-500">
+                  Nema pronađenih aukcija za '{{ searchTerm }}'.
+                </div>
 
-<div *ngIf="showInitialLists$ | async">
-  <div *ngIf="initialLoading$ | async" class="text-center py-8">
-    Učitavanje aukcija...
-  </div>
-  <div *ngIf="initialError$ | async as err" class="text-center text-red-500 py-8">
-    {{ err }}
-  </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mb-8">
+                  <app-auction-card
+                    *ngFor="let auction of results"
+                    [auction]="auction"
+                    (clicked)="openAuction(auction.id)"
+                  >
+                  </app-auction-card>
+                </div>
+            </ng-container>
+        </ng-container>
 
-  <ng-container
-    *ngIf="!(initialLoading$ | async) && !(initialError$ | async)"
-  >
-    <h2 class="text-xl font-bold mb-4">Popularne aukcije</h2>
-    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 mb-8">
-      <app-auction-card
-        *ngFor="let auction of (popularAuctions$ | async) || []"
-        [auction]="auction"
-        (clicked)="openAuction(auction.id)"
-      >
-      </app-auction-card>
-    </div>
+        <div *ngIf="showInitialLists$ | async">
+          <div *ngIf="initialLoading$ | async" class="text-center py-8">
+            Učitavanje aukcija...
+          </div>
+          <div *ngIf="initialError$ | async as err" class="text-center text-red-500 py-8">
+            {{ err }}
+          </div>
 
-    <h2 class="text-xl font-bold mb-4">Najnovije aukcije</h2>
-    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 mb-8">
-      <app-auction-card
-        *ngFor="let auction of (recentAuctions$ | async) || []"
-        [auction]="auction"
-        (clicked)="openAuction(auction.id)"
-      >
-      </app-auction-card>
-    </div>
+          <ng-container
+            *ngIf="!(initialLoading$ | async) && !(initialError$ | async)"
+          >
+            <h2 class="text-xl font-bold mb-4">Popularne aukcije</h2>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mb-8">
+              <app-auction-card
+                *ngFor="let auction of (popularAuctions$ | async) || []"
+                [auction]="auction"
+                (clicked)="openAuction(auction.id)"
+              >
+              </app-auction-card>
+            </div>
 
-    <h2 class="text-xl font-bold mb-4">Aukcije koje uskoro ističu</h2>
-    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 mb-8">
-      <app-auction-card
-        *ngFor="let auction of (endingSoonAuctions$ | async) || []"
-        [auction]="auction"
-        (clicked)="openAuction(auction.id)"
-      >
-      </app-auction-card>
-    </div>
-  </ng-container>
+            <h2 class="text-xl font-bold mb-4">Najnovije aukcije</h2>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mb-8">
+              <app-auction-card
+                *ngFor="let auction of (recentAuctions$ | async) || []"
+                [auction]="auction"
+                (clicked)="openAuction(auction.id)"
+              >
+              </app-auction-card>
+            </div>
+
+            <h2 class="text-xl font-bold mb-4">Aukcije koje uskoro ističu</h2>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mb-8">
+              <app-auction-card
+                *ngFor="let auction of (endingSoonAuctions$ | async) || []"
+                [auction]="auction"
+                (clicked)="openAuction(auction.id)"
+              >
+              </app-auction-card>
+            </div>
+          </ng-container>
+        </div>
+        
+    </main>
 </div>

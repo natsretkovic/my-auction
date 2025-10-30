@@ -78,7 +78,7 @@ export class AuctionDetailsComponent implements OnInit {
             const diffInMs = auctionEndTime.diff(now);
             
             if (diffInMs <= 0) {
-              this.auctionEnded=false;
+              this.auctionEnded=true;
               return '00:00:00'
             };
             
@@ -92,12 +92,10 @@ export class AuctionDetailsComponent implements OnInit {
               .join(':');
           }),
           takeWhile(timeString => timeString !== '00:00:00', true),
-          startWith('00:00:00') 
         );
       }),
       startWith('Učitavanje...') 
     );
-
 
     this.auction$ = combineLatest([
       storeAuction$,
@@ -105,17 +103,16 @@ export class AuctionDetailsComponent implements OnInit {
     ]).pipe(
       map(([auction, remainingTime]) => {
         if (!auction) return null;
-
         if (auction.item) {
           this.isOwner = auction.item.vlasnik?.id === this.currentUser?.id;
         }
         if (auction.item.slike?.length && !this.currentMainImageIsSet) {
-            this.currentMainImage = auction.item.slike[0];
-            this.currentMainImageIsSet = true;
-          }
+           this.currentMainImage = auction.item.slike[0];
+            this.currentMainImageIsSet = true;
+        }
          const currentPrice = auction.bidsList?.length 
-          ? Math.max(...auction.bidsList.map(b => b.ponuda)) 
-          : auction.startingPrice || 0;
+         ? Math.max(...auction.bidsList.map(b => b.ponuda)) 
+         : auction.startingPrice || 0;
 
 
         return {
@@ -155,9 +152,7 @@ export class AuctionDetailsComponent implements OnInit {
     }
 
     this.submittingBid = true;
-
     this.store.dispatch(placeBid({ auctionId: auctionData.auction!.id, bidAmount: this.bidAmount }));
-
     this.submittingBid = false;
     this.bidAmount = 0;
   }

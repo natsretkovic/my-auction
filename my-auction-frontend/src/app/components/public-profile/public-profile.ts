@@ -9,6 +9,7 @@ import { User } from '../../models/user.model';
 import { AuthService } from '../../services/auth.service';
 import { CommonModule } from '@angular/common';
 import { ReviewFormComponent } from '../review-form/review-form';
+import { CreateReviewPayload } from '../../models/dtos/review.dto';
 @Component({
   selector: 'app-public-profile',
   imports: [CommonModule, ReviewFormComponent],
@@ -24,6 +25,8 @@ export class PublicProfile implements OnInit {
 
   sellerId!: number;
   showReviewForm = false;
+  currentUser$!: Observable<User | null>;
+
 
   constructor(
     private store: Store,
@@ -35,7 +38,7 @@ export class PublicProfile implements OnInit {
     this.sellerId = Number(this.route.snapshot.paramMap.get('id'));
 
     this.user$ = this.authService.getProfilById(this.sellerId);
-
+    this.currentUser$ = this.authService.getProfile();
     this.store.dispatch(loadReviews({ sellerId: this.sellerId }));
     this.store.dispatch(loadAverageRating({ sellerId: this.sellerId }));
 
@@ -58,13 +61,12 @@ export class PublicProfile implements OnInit {
     });
     return;
   }
-
   this.store.dispatch(createReview({ 
     sellerId: userId, 
     review: {
       ocena: data.rating,
       komentar: data.comment
-    } 
+    } as CreateReviewPayload
   }));
 
   this.store.dispatch(loadReviews({ sellerId: userId }));

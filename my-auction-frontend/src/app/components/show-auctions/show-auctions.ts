@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { forkJoin, Observable, Subject } from 'rxjs';
-import { Router } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { AuctionService } from '../../services/auction.service';
 import { Auction } from '../../models/auction.model';
 import { CommonModule } from '@angular/common';
@@ -9,6 +9,7 @@ import { select, Store } from '@ngrx/store';
 import * as AuctionActions from '../../store/auction/auction.actions';
 import * as AuctionSelectors from '../../store/auction/auction.selectors';
 import { FormsModule } from '@angular/forms';
+import { SiderBar } from '../sider-bar/sider-bar';
 
 
 
@@ -16,7 +17,7 @@ import { FormsModule } from '@angular/forms';
   selector: 'app-show-auctions',
   templateUrl: './show-auctions.html',
   styleUrls: ['./show-auctions.css'],
-  imports: [CommonModule,AuctionCardComponent, FormsModule]
+  imports: [CommonModule,AuctionCardComponent, FormsModule, SiderBar, RouterModule]
 })
 export class ShowAuctionsComponent implements OnInit {
   popularAuctions$: Observable<Auction[] | null> = new Observable();
@@ -69,8 +70,11 @@ export class ShowAuctionsComponent implements OnInit {
            keyword: input
         })
       );
-    } else {
-      this.store.dispatch(AuctionActions.loadInitialAuctions());
     }
   }
+  onResetSearch(): void {
+    this.searchTerm = ''; 
+    this.store.dispatch(AuctionActions.clearSearch()); 
+    this.store.dispatch(AuctionActions.loadInitialAuctions()); 
+}
 }
